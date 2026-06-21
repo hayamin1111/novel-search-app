@@ -2,8 +2,6 @@
 // import {mockBooks} from "@/lib/googleBooksApi";
 // import Image from "next/image";
 import BookSearch from "@/components/BookSearch";
-// import BookSearchForm from "@/components/BookSearchForm/page";
-// import BookSearchResults from "@/components/BookSearchResults/page";
 
 
 export default function Home() {

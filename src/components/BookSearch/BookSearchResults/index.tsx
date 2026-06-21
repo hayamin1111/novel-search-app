@@ -1,12 +1,19 @@
-import BookList from "@/components/BookSearch/BookList"
+// import BookList from "@/components/BookSearch/BookList"
+import type { Book } from "@/types/book";
 
-// type Props = {
-//   xxx: number,
-// }
+type Props = {
+  books: Book[],
+};
 
-export default function BookSearchResults () {
+export default function BookSearchResults ({books}: Props) {
 
   return (
-    <BookList/>
+    <ul>
+      {
+        books.map(book => (
+          <li key={book.id}>『{book.title}』（{book.authors.join(", ")}）</li>
+        ))
+      }
+    </ul>
   )
 }

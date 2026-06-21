@@ -1,2 +1,9 @@
-// Appルーターの新機能。ルート単位でエラーバウンダリ"use client";使いたい。
 "use client";
+
+export default function Error() {
+  return (
+    <div>
+      <h2>エラーが発生しました</h2>
+    </div>
+  );
+}
