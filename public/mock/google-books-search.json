@@ -1,0 +1,27 @@
+{
+  "kind": "books#volumes",
+  "totalItems": 2,
+  "items": [
+    {
+      "id": "book-1",
+      "volumeInfo": {
+        "title": "仮のSF小説",
+        "authors": ["仮の著者"],
+        "publishedDate": "2020-01-01",
+        "description": "これは仮の説明文です。",
+        "imageLinks": {
+          "thumbnail": "https://example.com/cover.jpg"
+        }
+      }
+    },
+    {
+      "id": "book-2",
+      "volumeInfo": {
+        "title": "宇宙の仮タイトル",
+        "authors": ["仮の著者2", "仮の著者2-2"],
+        "publishedDate": "2022",
+        "description": "宇宙を舞台にした仮のSF小説です。"
+      }
+    }
+  ]
+}
