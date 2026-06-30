@@ -7,13 +7,12 @@ if (!apiKey) {
 }
 
 /**
- * Google Books APIでSF書籍を検索し、アプリ用のBook配列に変換して返す
+ * Google Books APIで書籍を検索し、アプリ用のBook配列に変換して返す
  */
 export const searchBooks = async (searchWord: string): Promise<Book[]> => {
   // URL生成
   const params = new URLSearchParams({
     q: `intitle:${searchWord}`,
-    // q: `${searchWord} subject:science-fiction`,
     printType: "books",
     maxResults: "10",
     key: apiKey,
@@ -29,15 +28,22 @@ export const searchBooks = async (searchWord: string): Promise<Book[]> => {
     throw new Error(`fetch error: ${response.status}`);
   }
   const json = await response.json();
-  console.log(json.items);
 
+  // 生データのnullチェック
   const items: GoogleBooksItem[] = json.items ?? [];
 
-  const books: Book[] = items.map((item) => ({
-    id: item.id,
-    title: item.volumeInfo?.title ?? "タイトル不明",
-    authors: item.volumeInfo?.authors ?? ["著者不明"],
-  }));
+  // 表示用に加工
+  const books: Book[] = items.map((item) => {
+    const thumbnail = item.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://");
+
+    return {
+      id: item.id,
+      title: item.volumeInfo?.title ?? "タイトル不明",
+      authors: item.volumeInfo?.authors ?? ["著者不明"],
+      publishedDate: item.volumeInfo?.publishedDate ?? "出版日不明",
+      thumbnail,
+    };
+  });
 
   return books;
 };
