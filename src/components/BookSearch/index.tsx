@@ -18,6 +18,7 @@ export default function BookSearch() {
     }
 
     try {
+      // 文字列検索
       const books = await searchBooks(searchWord);
       setBooks(books);
     } catch (error) {

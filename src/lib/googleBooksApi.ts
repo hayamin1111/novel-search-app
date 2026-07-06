@@ -1,4 +1,4 @@
-import type { GoogleBooksItem, Book } from "@/types/book";
+import type { GoogleBooksItem, Book, BookDetail } from "@/types/book";
 
 // 環境変数チェック
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
@@ -21,11 +21,8 @@ export const searchBooks = async (searchWord: string): Promise<Book[]> => {
 
   // fetchしてjson受け取る
   const response = await fetch(url);
-  console.log(response);
   if (!response.ok) {
-    const errorText = await response.text();
-    console.error("fetch error", response.status, errorText);
-    throw new Error(`fetch error: ${response.status}`);
+    throw new Error(`searchBooks fetch error: ${response.status}`);
   }
   const json = await response.json();
 
@@ -46,4 +43,39 @@ export const searchBooks = async (searchWord: string): Promise<Book[]> => {
   });
 
   return books;
+};
+
+/**
+ * Google Books APIのIDによって
+ */
+export const getBookDetail = async (id: string): Promise<BookDetail> => {
+  const params = new URLSearchParams({
+    key: apiKey,
+  });
+  const url = `https://www.googleapis.com/books/v1/volumes/${id}?${params.toString()}`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("getBookDetail fetch error", response.status, errorText);
+    throw new Error(`getBookDetail fetch error: ${response.status}`);
+  }
+  const json = await response.json();
+
+  // 生データのnullチェック
+  const item: GoogleBooksItem = json;
+
+  // 表示用に加工
+  const thumbnail = item.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://");
+  return {
+    id: item.id,
+    title: item.volumeInfo?.title ?? "タイトル不明",
+    authors: item.volumeInfo?.authors ?? ["著者不明"],
+    publisher: item.volumeInfo?.publisher ?? "出版社不明",
+    publishedDate: item.volumeInfo?.publishedDate ?? "出版日不明",
+    description: item.volumeInfo?.description ?? "詳細不明",
+    pageCount: item.volumeInfo?.pageCount,
+    thumbnail,
+    previewLink: item.volumeInfo?.previewLink,
+  };
 };

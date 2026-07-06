@@ -3,10 +3,15 @@ export type GoogleBooksItem = {
   volumeInfo?: {
     title?: string;
     authors?: string[];
+    publisher?: string;
     publishedDate?: string;
     imageLinks?: {
       thumbnail?: string;
     };
+    description?: string;
+    pageCount?: number;
+    thumbnail?: string;
+    previewLink?: string;
   };
 };
 
@@ -22,10 +27,10 @@ export type BookDetail = {
   id: string;
   title: string;
   authors: string[];
-  publisher: string;
-  publishedDate: string;
-  description: string;
-  pageCount?: number;
+  publisher?: string;
+  publishedDate?: string;
+  description?: string;
+  pageCount?: number | string;
   thumbnail?: string;
   previewLink?: string;
 };
