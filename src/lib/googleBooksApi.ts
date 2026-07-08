@@ -65,6 +65,14 @@ export const getBookDetail = async (id: string): Promise<BookDetail> => {
   // 生データのnullチェック
   const item: GoogleBooksItem = json;
 
+  // HTMLタグの処理（brは\n、）
+  const stripHtml = (html: string) => {
+    return html
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<wbr\s*\/?>/gi, "")
+      .replace(/<[^>]*>/g, "");
+  };
+
   // 表示用に加工
   const thumbnail = item.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://");
   return {
@@ -73,7 +81,8 @@ export const getBookDetail = async (id: string): Promise<BookDetail> => {
     authors: item.volumeInfo?.authors ?? ["著者不明"],
     publisher: item.volumeInfo?.publisher ?? "出版社不明",
     publishedDate: item.volumeInfo?.publishedDate ?? "出版日不明",
-    description: item.volumeInfo?.description ?? "詳細不明",
+    // descriptionのみHTMLが入っているので別で処理
+    description: item.volumeInfo?.description ? stripHtml(item.volumeInfo.description) : "詳細不明",
     pageCount: item.volumeInfo?.pageCount,
     thumbnail,
     previewLink: item.volumeInfo?.previewLink,

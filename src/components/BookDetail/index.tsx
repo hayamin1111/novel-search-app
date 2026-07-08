@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getBookDetail } from "@/lib/googleBooksApi";
 import type { BookDetail } from "@/types/book";
+import styles from "./page.module.css";
 
 type Props = {
   id: string;
@@ -43,7 +44,7 @@ export default function BookDetail({ id }: Props) {
       <p>出版社：{book.publisher}</p>
       <p>出版日：{book.publishedDate}</p>
       <p>ページ数：{book.pageCount ?? "不明"}</p>
-      <p>{book.description}</p>
+      <p className={styles.description}>{book.description}</p>
 
       {book.previewLink && (
         <a href={book.previewLink} target="_blank" rel="noreferrer">

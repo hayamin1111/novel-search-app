@@ -7,11 +7,7 @@ export default function Home() {
         <h1>書籍検索アプリ</h1>
       </header>
       <main className="">
-        <p>
-          気になる本のタイトルを検索できます。
-          <br />
-          キーワードを入力してください。
-        </p>
+        <p>気になる本のタイトルを検索できます。</p>
         <BookSearch />
       </main>
       <footer>

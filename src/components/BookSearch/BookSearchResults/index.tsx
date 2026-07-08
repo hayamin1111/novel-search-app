@@ -9,9 +9,9 @@ type Props = {
 
 export default function BookSearchResults({ books }: Props) {
   return (
-    <article>
+    <>
       {books.map((book) => (
-        <div key={book.id}>
+        <article key={book.id}>
           <h2>『{book.title}』</h2>
           <p>{book.authors.join(", ")}</p>
           <p>{book.publishedDate}</p>
@@ -21,8 +21,8 @@ export default function BookSearchResults({ books }: Props) {
             <p>表紙なし</p>
           )}
           <Link href={`/books/${book.id}`}>詳細を見る</Link>
-        </div>
+        </article>
       ))}
-    </article>
+    </>
   );
 }
