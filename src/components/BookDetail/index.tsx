@@ -1,13 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { getBookDetail } from "@/lib/googleBooksApi";
 import type { BookDetail } from "@/types/book";
-import styles from "./page.module.css";
+import BookDetailContent from "@/components/BookDetail/BookDetailContent";
 
 type Props = {
   id: string;
 };
 
+/**
+ * データ取得と状態管理担当
+ */
 export default function BookDetail({ id }: Props) {
   // 状態管理
   const [book, setBook] = useState<BookDetail | null>(null);
@@ -33,24 +37,16 @@ export default function BookDetail({ id }: Props) {
     fetchBookDetail();
   }, [id]);
 
-  if (isLoading) return <p>読み込み中...</p>;
-  if (error) return <p>{error}</p>;
-  if (!book) return <p>書籍情報が見つかりませんでした</p>;
+  const isNotFound = !isLoading && !error && book === null;
+  const hasBook = !isLoading && !error && book !== null;
 
   return (
     <>
-      <h1>{book.title}</h1>
-      <p>著者：{book.authors.join(", ")}</p>
-      <p>出版社：{book.publisher}</p>
-      <p>出版日：{book.publishedDate}</p>
-      <p>ページ数：{book.pageCount ?? "不明"}</p>
-      <p className={styles.description}>{book.description}</p>
-
-      {book.previewLink && (
-        <a href={book.previewLink} target="_blank" rel="noreferrer">
-          Google Booksで見る
-        </a>
-      )}
+      {isLoading && <p>読み込み中...</p>}
+      {error && <p>{error}</p>}
+      {isNotFound && <p>書籍情報が見つかりませんでした</p>}
+      {hasBook && <BookDetailContent book={book} />}
+      <Link href="/">検索に戻る</Link>
     </>
   );
 }

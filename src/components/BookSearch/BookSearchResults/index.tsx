@@ -1,4 +1,3 @@
-// import BookList from "@/components/BookSearch/BookList"
 import Image from "next/image";
 import Link from "next/link";
 import type { Book } from "@/types/book";
@@ -16,9 +15,9 @@ export default function BookSearchResults({ books }: Props) {
           <p>{book.authors.join(", ")}</p>
           <p>{book.publishedDate}</p>
           {book.thumbnail ? (
-            <Image src={book.thumbnail} alt={`${book.title}の表紙`} width="150" height="200" />
+            <Image src={book.thumbnail} alt={`${book.title}の表紙`} width={150} height={200} />
           ) : (
-            <p>表紙なし</p>
+            <Image src="/image/dummy.png" alt="表紙なし" width={150} height={200} />
           )}
           <Link href={`/books/${book.id}`}>詳細を見る</Link>
         </article>
