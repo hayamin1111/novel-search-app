@@ -7,13 +7,15 @@ if (!apiKey) {
 }
 
 /**
+ * URLパラメータ生成
  * Google Books APIで書籍を検索し、アプリ用のBook配列に変換して返す
  */
-export const searchBooks = async (searchWord: string): Promise<Book[]> => {
+export const searchBooks = async (searchWord: string, startIndex = 0): Promise<Book[]> => {
   // URL生成
   const params = new URLSearchParams({
     q: `intitle:${searchWord}`,
     printType: "books",
+    startIndex: startIndex.toString(),
     maxResults: "10",
     key: apiKey,
   });

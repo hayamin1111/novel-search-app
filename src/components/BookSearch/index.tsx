@@ -12,7 +12,14 @@ export default function BookSearch() {
   const [hasSearched, setHasSearched] = useState(false); //未検索かどうか
   const [error, setError] = useState<string | null>(null);
   const [books, setBooks] = useState<Book[]>([]); //書籍情報
+  const [submittedSearchWord, setSubmittedSearchWord] = useState(""); //「さらに見る」用に検索ワードを保存
+  const [nextStartIndex, setNextStartIndex] = useState(0); //「さらに見る」用のパラメータ
+  const [hasMore, setHasMore] = useState(false); //「さらに見る」用
+  const [isLoadingMore, setIsLoadingMore] = useState(false); //「さらに見る」用ローディング
 
+  /**
+   * 通常の検索
+   */
   const handleSearch = async (searchWord: string) => {
     // 空文字処理
     if (searchWord === "") {
@@ -26,18 +33,47 @@ export default function BookSearch() {
     setBooks([]); //前回検索結果は削除
     setError(null); //前回のエラー表示は削除
 
+    setSubmittedSearchWord(searchWord);
+
     try {
       // 文字列検索
       const books = await searchBooks(searchWord);
       setBooks(books);
       setHasSearched(true);
+      setNextStartIndex(10);
+      setHasMore(books.length === 10);
     } catch (error) {
-      console.error(error);
       setBooks([]);
       setHasSearched(true);
+      console.error(error);
       setError("書籍情報の取得に失敗しました");
+      setHasMore(false);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  /**
+   * 「さらに見る」用の検索
+   */
+  const handleSearchMore = async () => {
+    if (submittedSearchWord === "" || !hasMore) return;
+    setIsLoadingMore(true);
+    let newBooks: Book[] = [];
+
+    try {
+      // 文字列はそのまま、startIndexパラメータを追加して再検索
+      newBooks = await searchBooks(submittedSearchWord, nextStartIndex);
+      setBooks((prevBooks) => [...prevBooks, ...newBooks]); //既存結果の末尾に追加
+      setNextStartIndex((prev) => prev + 10); // ボタンクリックで10ずつインクリメント
+      setHasMore(newBooks.length === 10);
+      setHasSearched(true);
+    } catch (error) {
+      console.error(error);
+      setError("書籍情報の取得に失敗しました");
+    } finally {
+      setIsLoadingMore(false);
+      setError(null); //前回のエラー表示は削除
     }
   };
 
@@ -56,6 +92,12 @@ export default function BookSearch() {
       <div>
         {isEmpty && <p>該当する書籍が見つかりませんでした。</p>}
         {hasResults && <BookSearchResults books={books} />}
+        {hasMore && (
+          <button type="button" onClick={handleSearchMore}>
+            さらに見る
+          </button>
+        )}
+        {isLoadingMore && <p>さらに読み込み中...</p>}
       </div>
     </>
   );
