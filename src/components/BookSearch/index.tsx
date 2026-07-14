@@ -57,7 +57,7 @@ export default function BookSearch() {
    * 「さらに見る」用の検索
    */
   const handleSearchMore = async () => {
-    if (submittedSearchWord === "" || !hasMore) return;
+    if (submittedSearchWord === "" || !hasMore || isLoadingMore) return;
     setIsLoadingMore(true);
     let newBooks: Book[] = [];
 
@@ -93,11 +93,10 @@ export default function BookSearch() {
         {isEmpty && <p>該当する書籍が見つかりませんでした。</p>}
         {hasResults && <BookSearchResults books={books} />}
         {hasMore && (
-          <button type="button" onClick={handleSearchMore}>
-            さらに見る
+          <button type="button" onClick={handleSearchMore} disabled={isLoadingMore}>
+            {isLoadingMore ? "読み込み中..." : "さらに見る"}
           </button>
         )}
-        {isLoadingMore && <p>さらに読み込み中...</p>}
       </div>
     </>
   );
