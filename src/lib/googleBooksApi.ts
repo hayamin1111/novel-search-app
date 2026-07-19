@@ -7,7 +7,6 @@ if (!apiKey) {
 }
 
 /**
- * URLパラメータ生成
  * Google Books APIで書籍を検索し、アプリ用のBook配列に変換して返す
  */
 export const searchBooks = async (searchWord: string, startIndex = 0): Promise<Book[]> => {
@@ -48,7 +47,7 @@ export const searchBooks = async (searchWord: string, startIndex = 0): Promise<B
 };
 
 /**
- * Google Books APIのIDによって
+ * Google Books APIのIDによって詳細情報を取得する
  */
 export const getBookDetail = async (id: string): Promise<BookDetail> => {
   const params = new URLSearchParams({

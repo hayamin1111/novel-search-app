@@ -10,12 +10,13 @@ export default function BookSearch() {
   // 状態管理
   const [isLoading, setIsLoading] = useState(false); //検索中ローディング
   const [hasSearched, setHasSearched] = useState(false); //未検索かどうか
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); //初回検索・検索全体のエラー
   const [books, setBooks] = useState<Book[]>([]); //書籍情報
   const [submittedSearchWord, setSubmittedSearchWord] = useState(""); //「さらに見る」用に検索ワードを保存
   const [nextStartIndex, setNextStartIndex] = useState(0); //「さらに見る」用のパラメータ
   const [hasMore, setHasMore] = useState(false); //「さらに見る」用
   const [isLoadingMore, setIsLoadingMore] = useState(false); //「さらに見る」用ローディング
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null); //「さらに見る」の追加取得エラー
 
   /**
    * 通常の検索
@@ -26,12 +27,23 @@ export default function BookSearch() {
       setBooks([]);
       setHasSearched(false);
       setError(null);
+      setSubmittedSearchWord("");
+      setNextStartIndex(0);
+      setHasMore(false);
+      setIsLoadingMore(false);
+      setLoadMoreError(null);
       return;
     }
 
+    // 初期化
     setIsLoading(true);
     setBooks([]); //前回検索結果は削除
     setError(null); //前回のエラー表示は削除
+    setLoadMoreError(null);
+    setNextStartIndex(0);
+    setHasMore(false);
+    setIsLoadingMore(false);
+    setLoadMoreError(null);
 
     setSubmittedSearchWord(searchWord);
 
@@ -46,7 +58,7 @@ export default function BookSearch() {
       setBooks([]);
       setHasSearched(true);
       console.error(error);
-      setError("書籍情報の取得に失敗しました");
+      setError("書籍情報の取得に失敗しました。時間をおいて再度お試しください。");
       setHasMore(false);
     } finally {
       setIsLoading(false);
@@ -58,22 +70,39 @@ export default function BookSearch() {
    */
   const handleSearchMore = async () => {
     if (submittedSearchWord === "" || !hasMore || isLoadingMore) return;
+
     setIsLoadingMore(true);
+    setLoadMoreError(null);
+
     let newBooks: Book[] = [];
 
     try {
-      // 文字列はそのまま、startIndexパラメータを追加して再検索
-      newBooks = await searchBooks(submittedSearchWord, nextStartIndex);
-      setBooks((prevBooks) => [...prevBooks, ...newBooks]); //既存結果の末尾に追加
-      setNextStartIndex((prev) => prev + 10); // ボタンクリックで10ずつインクリメント
+      newBooks = await searchBooks(submittedSearchWord, nextStartIndex); //startIndexパラメータを追加して再検索
+
+      //書籍の重複防止
+      setBooks((prevBooks) => {
+        const existingBookIds = new Set(prevBooks.map((book) => book.id));
+
+        const uniqueBooks = newBooks.filter((book) => {
+          if (existingBookIds.has(book.id)) {
+            return false;
+          }
+
+          existingBookIds.add(book.id);
+          return true;
+        });
+
+        return [...prevBooks, ...uniqueBooks]; //既存結果の末尾に追加
+      });
+
+      setNextStartIndex((prev) => prev + 10); // 次回の追加取得開始位置を10件分進める
       setHasMore(newBooks.length === 10);
       setHasSearched(true);
     } catch (error) {
       console.error(error);
-      setError("書籍情報の取得に失敗しました");
+      setLoadMoreError("追加の書籍情報の取得に失敗しました。時間をおいて再度お試しください。");
     } finally {
       setIsLoadingMore(false);
-      setError(null); //前回のエラー表示は削除
     }
   };
 
@@ -94,9 +123,10 @@ export default function BookSearch() {
         {hasResults && <BookSearchResults books={books} />}
         {hasMore && (
           <button type="button" onClick={handleSearchMore} disabled={isLoadingMore}>
-            {isLoadingMore ? "読み込み中..." : "さらに見る"}
+            {isLoadingMore ? "追加読み込み中..." : "さらに見る"}
           </button>
         )}
+        {loadMoreError && <p>{loadMoreError}</p>}
       </div>
     </>
   );
