@@ -1,0 +1,3 @@
+.formWrapper {
+  width: clamp(20rem, 15.384rem + 20.512vw, 40rem);
+}

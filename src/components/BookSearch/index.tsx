@@ -1,5 +1,5 @@
 "use client";
-
+import styles from "./index.module.css";
 import { useState } from "react";
 import type { Book } from "@/types/book";
 import { searchBooks } from "@/lib/googleBooksApi";
@@ -113,20 +113,27 @@ export default function BookSearch() {
   return (
     <>
       <div>
-        {isInitial && <p>キーワードを入力してください。</p>}
-        <BookSearchForm onSearch={handleSearch} />
-        {isLoading && <p>検索中...</p>}
-        {error && <p>{error}</p>}
+        {isInitial && <p className={styles.text}>キーワードを入力してください。</p>}
+        <div className={styles.formWrapper}>
+          <BookSearchForm onSearch={handleSearch} />
+        </div>
+        {isLoading && <p className={styles.loading}>検索中...</p>}
+        {error && <p className={styles.error}>{error}</p>}
       </div>
       <div>
-        {isEmpty && <p>該当する書籍が見つかりませんでした。</p>}
+        {isEmpty && <p className={styles.notFound}>該当する書籍が見つかりませんでした。</p>}
         {hasResults && <BookSearchResults books={books} />}
         {hasMore && (
-          <button type="button" onClick={handleSearchMore} disabled={isLoadingMore}>
+          <button
+            type="button"
+            onClick={handleSearchMore}
+            disabled={isLoadingMore}
+            className={styles.button}
+          >
             {isLoadingMore ? "追加読み込み中..." : "さらに見る"}
           </button>
         )}
-        {loadMoreError && <p>{loadMoreError}</p>}
+        {loadMoreError && <p className={styles.error}>{loadMoreError}</p>}
       </div>
     </>
   );

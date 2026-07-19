@@ -1,4 +1,5 @@
 "use client";
+import styles from "./index.module.css";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getBookDetail } from "@/lib/googleBooksApi";
@@ -41,12 +42,14 @@ export default function BookDetail({ id }: Props) {
 
   return (
     <>
-      {isLoading && <p>読み込み中...</p>}
-      {error && <p>{error}</p>}
-      {isNotFound && <p>書籍情報が見つかりませんでした</p>}
+      {isLoading && <p className={styles.loading}>読み込み中...</p>}
+      {error && <p className={styles.error}>{error}</p>}
+      {isNotFound && <p className={styles.notfound}>書籍情報が見つかりませんでした</p>}
       {/* ↓stateが「BookDetail | null」なので、変数にはせずbookを使う前に直接nullチェックする */}
       {!isLoading && !error && book !== null && <BookDetailContent book={book} />}
-      <Link href="/">検索に戻る</Link>
+      <Link href="/" className={styles.link}>
+        検索に戻る
+      </Link>
     </>
   );
 }

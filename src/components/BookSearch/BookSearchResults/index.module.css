@@ -1,0 +1,16 @@
+.cardList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr));
+  gap: 4px;
+}
+
+.card {
+  padding: var(--space-4);
+  color: var(--color-text-base);
+  background-color: var(--color-surface);
+  border-radius: clamp(1rem, 1.538rem + 2.051vw, 1rem);
+}
+
+.title {
+  font-size: var(--font-size-md);
+}
