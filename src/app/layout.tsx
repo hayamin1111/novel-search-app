@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Cherry_Bomb_One } from "next/font/google";
+import { Righteous } from "next/font/google";
 import "./globals.css";
 
-const cherryBombOne = Cherry_Bomb_One({
+const righteous = Righteous({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-cherry-bomb-one",
+  variable: "--font-righteous",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Book Finder",
+  title: "Book Finder - 気になる本をタイトルから探せる -",
   description: "気になる本をタイトルから探せる書籍検索サービスです。",
 };
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={cherryBombOne.variable}>
+    <html lang="ja" className={righteous.variable}>
       <body>{children}</body>
     </html>
   );
