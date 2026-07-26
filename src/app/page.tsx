@@ -25,7 +25,7 @@ export default function Home() {
         </p>
       </header>
       <main className={styles.content}>
-        <p className={styles.text}>気になる本のタイトルを検索できます。</p>
+        <p className={styles.lead}>気になる本のタイトルを検索できます。</p>
         <BookSearch />
       </main>
       <footer className={styles.footer}>

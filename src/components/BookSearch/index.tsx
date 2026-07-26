@@ -112,17 +112,19 @@ export default function BookSearch() {
 
   return (
     <>
-      <div>
-        {isInitial && <p className={styles.text}>キーワードを入力してください。</p>}
-        <div className={styles.formWrapper}>
+      <div className={styles.view}>
+        <div className={styles.field}>
           <BookSearchForm onSearch={handleSearch} />
+          {error && <p className={styles.error}>{error}</p>}
         </div>
-        {isLoading && <p className={styles.loading}>検索中...</p>}
-        {error && <p className={styles.error}>{error}</p>}
+        <div className={styles.result}>
+          {isInitial && <p className={styles.text}>キーワードを入力してください。</p>}
+          {isLoading && <p className={styles.loading}>検索中...</p>}
+          {isEmpty && <p className={styles.notFound}>該当する書籍が見つかりませんでした。</p>}
+          {hasResults && <BookSearchResults books={books} />}
+        </div>
       </div>
       <div>
-        {isEmpty && <p className={styles.notFound}>該当する書籍が見つかりませんでした。</p>}
-        {hasResults && <BookSearchResults books={books} />}
         {hasMore && (
           <button
             type="button"

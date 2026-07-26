@@ -1,3 +1,28 @@
-.formWrapper {
-  width: clamp(20rem, 15.384rem + 20.512vw, 40rem);
+.view {
+  margin-block-start: 60px;
+  background-color: var(--color-page);
+  border-radius: var(--radius-lg);
 }
+
+.field {
+  width: clamp(21.375rem, 7.166rem + 63.148vw, 64rem);
+  margin-inline: auto;
+  translate: 0 -40px;
+}
+
+.result {
+  padding-block-end: var(--space-5);
+  padding-inline: var(--space-5);
+}
+
+/* .error {
+}
+
+.text {
+}
+
+.loading {
+}
+
+.notFound {
+} */

@@ -26,6 +26,18 @@ h4,
 h5,
 h6 {
   margin-block-start: 0;
+  word-break: break-all;
+}
+
+p {
+  word-break: break-all;
+}
+
+ul,
+ol,
+li {
+  padding: 0;
+  margin: 0;
 }
 
 img,
@@ -64,11 +76,11 @@ a {
 :root {
   /* Colors */
   --color-primary: #2a9150;
-  --color-bg: var(--color-primary);
   --color-primary-dark: #21713f;
-  --color-surface: #fffef8;
+  --color-bg: var(--color-primary);
+  --color-surface: #fff;
   --color-surface-muted: #f1f7ef;
-  --color-surface-accent: #e4f4df;
+  --color-surface-accent: #effeea;
   --color-page: #f6faf3;
 
   /* Text */
@@ -84,15 +96,11 @@ a {
   --color-line: #cfe0d0;
   --color-line-strong: #8fba94;
 
-  /* Accent (interactive) */
+  /* Accent */
   --color-accent: #1f7a37;
   --color-accent-hover: #17642c;
   --color-accent-active: #104d21;
   --color-accent-light: #e5f5e4;
-
-  /* Link */
-  --color-link: #17642c;
-  --color-link-hover: #104d21;
 
   /* Feedback */
   --color-focus: #ffcf33;
@@ -126,7 +134,7 @@ a {
   --space-8: clamp(4rem, 3.53rem + 2.051vw, 6rem);
 
   /* Layout */
-  --container-width: 120rem;
+  --container-width: 90rem;
   --page-padding: clamp(1rem, 0.769rem + 1.025vw, 2rem);
 
   /* Radius */
@@ -138,10 +146,6 @@ a {
   /* Shadow */
   --shadow-sm: 0 1px 3px rgb(28 34 30 / 8%);
   --shadow-md: 0 8px 24px rgb(28 34 30 / 10%);
-
-  /* Form */
-  --control-height: 2.75rem;
-  --control-padding-inline: 1rem;
 
   /* Transition */
   --transition-fast: 150ms ease;

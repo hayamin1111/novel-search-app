@@ -1,7 +1,7 @@
 .container {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  width: min(calc(100% - var(--page-padding) * 2), var(--container-width));
+  width: min(100%, var(--container-width));
   min-height: 100svh;
   padding-block: var(--space-7) var(--space-2);
   margin-inline: auto;
@@ -27,18 +27,24 @@
   display: flex;
   gap: var(--space-2);
   align-items: center;
+}
 
-  .svg {
-    flex-shrink: 0;
-    width: var(--font-size-lg);
-    color: var(--color-text-sub);
-  }
+.svg {
+  flex-shrink: 0;
+  width: var(--font-size-lg);
+  color: var(--color-text-sub);
+}
 
-  .catch {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-sub);
-    letter-spacing: 0.05em;
-  }
+.catch {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-sub);
+  letter-spacing: 0.05em;
+}
+
+.lead {
+  margin-block-start: var(--space-6);
+  color: var(--color-text-sub);
+  text-align: center;
 }
 
 .footer {
