@@ -123,17 +123,17 @@ export default function BookSearch() {
           {isEmpty && <p className={styles.notFound}>該当する書籍が見つかりませんでした。</p>}
           {hasResults && <BookSearchResults books={books} />}
         </div>
-      </div>
-      <div>
         {hasMore && (
-          <button
-            type="button"
-            onClick={handleSearchMore}
-            disabled={isLoadingMore}
-            className={styles.button}
-          >
-            {isLoadingMore ? "追加読み込み中..." : "さらに見る"}
-          </button>
+          <div className={styles.buttonWrapper}>
+            <button
+              type="button"
+              onClick={handleSearchMore}
+              disabled={isLoadingMore}
+              className={styles.button}
+            >
+              {isLoadingMore ? "追加読み込み中..." : "+ さらに見る"}
+            </button>
+          </div>
         )}
         {loadMoreError && <p className={styles.error}>{loadMoreError}</p>}
       </div>

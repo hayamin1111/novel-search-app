@@ -48,5 +48,6 @@
 }
 
 .footer {
-  text-align: right;
+  margin-block-start: var(--space-2);
+  text-align: center;
 }

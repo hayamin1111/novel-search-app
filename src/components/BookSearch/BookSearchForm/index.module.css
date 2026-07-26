@@ -56,17 +56,19 @@
 
 /* Interaction */
 
-.input:hover {
-  border-color: var(--color-line-strong);
+@media (hover: hover) and (pointer: fine) {
+  .input:hover {
+    border-color: var(--color-line-strong);
+  }
+
+  .button:hover {
+    background-color: var(--color-accent-hover);
+  }
 }
 
 .input:focus {
   outline: var(--color-focus) solid 2px;
   outline-offset: 2px;
-}
-
-.button:hover {
-  background-color: var(--color-accent-hover);
 }
 
 .button:focus-visible {

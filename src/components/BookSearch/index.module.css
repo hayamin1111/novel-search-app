@@ -1,4 +1,6 @@
 .view {
+  padding-block-end: var(--space-5);
+  padding-inline: var(--space-5);
   margin-block-start: 60px;
   background-color: var(--color-page);
   border-radius: var(--radius-lg);
@@ -8,11 +10,6 @@
   width: clamp(21.375rem, 7.166rem + 63.148vw, 64rem);
   margin-inline: auto;
   translate: 0 -40px;
-}
-
-.result {
-  padding-block-end: var(--space-5);
-  padding-inline: var(--space-5);
 }
 
 /* .error {
@@ -26,3 +23,41 @@
 
 .notFound {
 } */
+
+.buttonWrapper {
+  margin-block: var(--space-6);
+  text-align: center;
+}
+
+.button {
+  display: inline-block;
+  min-width: 200px;
+  padding: var(--space-3) var(--space-5);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base),
+    background-color var(--transition-base);
+}
+
+/* Interaction */
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    color: var(--color-text);
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+}
+
+.button:focus-visible {
+  outline: var(--color-focus) solid 2px;
+  outline-offset: 2px;
+}
+
+.button:active {
+  color: var(--color-accent-active);
+}

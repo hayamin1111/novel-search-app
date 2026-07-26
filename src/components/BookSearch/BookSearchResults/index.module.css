@@ -99,7 +99,7 @@
   padding: var(--space-1);
   margin-top: auto;
   font-weight: var(--font-weight-bold);
-  color: var(--color-accent);
+  color: var(--color-primary);
   text-decoration: none;
   background-color: var(--color-surface-accent);
   border-radius: var(--radius-sm);
@@ -117,18 +117,27 @@
 }
 
 /* Interaction */
-.card:hover,
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    border-color: var(--color-border-strong);
+
+    & .image {
+      scale: 1.02;
+    }
+  }
+
+  .link:hover {
+    color: var(--color-surface);
+    background-color: var(--color-primary);
+  }
+}
+
 .card:focus-within {
   border-color: var(--color-border-strong);
 
   & .image {
     scale: 1.02;
   }
-}
-
-.link:hover {
-  color: var(--color-surface);
-  background-color: var(--color-accent);
 }
 
 .link:focus-visible {

@@ -29,7 +29,7 @@ export default function Home() {
         <BookSearch />
       </main>
       <footer className={styles.footer}>
-        <small className={styles.copyright}>書籍検索&copy;2026hykw</small>
+        <small className={styles.copyright}>Book Finder&copy;2026hykw</small>
       </footer>
     </div>
   );
