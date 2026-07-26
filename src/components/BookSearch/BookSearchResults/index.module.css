@@ -16,7 +16,7 @@
   transition: border-color var(--transition-base);
 }
 
-.body {
+.cardBody {
   display: grid;
   grid-template-rows: subgrid;
   grid-row: span 3;
@@ -24,7 +24,7 @@
   padding: var(--space-4) var(--space-2) var(--space-2);
 }
 
-.title {
+.cardTitle {
   display: -webkit-box;
   margin: 0;
   overflow: hidden;
@@ -36,13 +36,13 @@
   -webkit-box-orient: vertical;
 }
 
-.infoList {
+.bookInfoList {
   display: grid;
   row-gap: var(--space-2);
   font-size: var(--font-size-sm);
 }
 
-.infoItem {
+.bookInfoItem {
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: var(--space-2);
@@ -60,7 +60,7 @@
   color: var(--color-text-subtle);
 }
 
-.icon {
+.infoIconSvg {
   width: 100%;
   height: 100%;
 }
@@ -72,7 +72,7 @@
   -webkit-line-clamp: 2;
 }
 
-.imageWrapper {
+.coverArea {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,14 +84,14 @@
   border-radius: calc(var(--radius-lg) - var(--space-1));
 }
 
-.image {
+.coverImage {
   width: 100%;
   height: 100%;
   object-fit: contain;
   transition: scale var(--transition-base);
 }
 
-.link {
+.detailLink {
   display: flex;
   column-gap: var(--space-1);
   align-items: center;
@@ -108,7 +108,7 @@
     background-color var(--transition-base);
 }
 
-.link::before {
+.detailLink::before {
   position: absolute;
   inset: 0;
   content: "";
@@ -121,12 +121,12 @@
   .card:hover {
     border-color: var(--color-border-strong);
 
-    & .image {
+    & .coverImage {
       scale: 1.02;
     }
   }
 
-  .link:hover {
+  .detailLink:hover {
     color: var(--color-surface);
     background-color: var(--color-primary);
   }
@@ -135,12 +135,12 @@
 .card:focus-within {
   border-color: var(--color-border-strong);
 
-  & .image {
+  & .coverImage {
     scale: 1.02;
   }
 }
 
-.link:focus-visible {
+.detailLink:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 4px;
   border-radius: var(--radius-sm);

@@ -112,30 +112,30 @@ export default function BookSearch() {
 
   return (
     <>
-      <div className={styles.view}>
-        <div className={styles.field}>
+      <div className={styles.searchPanel}>
+        <div className={styles.searchFormArea}>
           <BookSearchForm onSearch={handleSearch} />
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <p className={styles.searchError}>{error}</p>}
         </div>
-        <div className={styles.result}>
-          {isInitial && <p className={styles.text}>キーワードを入力してください。</p>}
-          {isLoading && <p className={styles.loading}>検索中...</p>}
-          {isEmpty && <p className={styles.notFound}>該当する書籍が見つかりませんでした。</p>}
+        <div className={styles.searchResultArea}>
+          {isInitial && <p className={styles.searchPrompt}>キーワードを入力してください。</p>}
+          {isLoading && <p className={styles.searchLoading}>検索中...</p>}
+          {isEmpty && <p className={styles.emptyMessage}>該当する書籍が見つかりませんでした。</p>}
           {hasResults && <BookSearchResults books={books} />}
         </div>
         {hasMore && (
-          <div className={styles.buttonWrapper}>
+          <div className={styles.loadMoreArea}>
             <button
               type="button"
               onClick={handleSearchMore}
               disabled={isLoadingMore}
-              className={styles.button}
+              className={styles.loadMoreButton}
             >
               {isLoadingMore ? "追加読み込み中..." : "+ さらに見る"}
             </button>
           </div>
         )}
-        {loadMoreError && <p className={styles.error}>{loadMoreError}</p>}
+        {loadMoreError && <p className={styles.loadMoreError}>{loadMoreError}</p>}
       </div>
     </>
   );

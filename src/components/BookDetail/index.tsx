@@ -42,12 +42,12 @@ export default function BookDetail({ id }: Props) {
 
   return (
     <>
-      {isLoading && <p className={styles.loading}>読み込み中...</p>}
-      {error && <p className={styles.error}>{error}</p>}
-      {isNotFound && <p className={styles.notfound}>書籍情報が見つかりませんでした</p>}
+      {isLoading && <p className={styles.detailLoading}>読み込み中...</p>}
+      {error && <p className={styles.detailError}>{error}</p>}
+      {isNotFound && <p className={styles.detailNotFound}>書籍情報が見つかりませんでした</p>}
       {/* ↓stateが「BookDetail | null」なので、変数にはせずbookを使う前に直接nullチェックする */}
       {!isLoading && !error && book !== null && <BookDetailContent book={book} />}
-      <Link href="/" className={styles.link}>
+      <Link href="/" className={styles.backLink}>
         検索に戻る
       </Link>
     </>

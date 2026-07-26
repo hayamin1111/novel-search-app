@@ -1,4 +1,4 @@
-.view {
+.searchPanel {
   padding-block-end: var(--space-5);
   padding-inline: var(--space-5);
   margin-block-start: 60px;
@@ -6,7 +6,7 @@
   border-radius: var(--radius-lg);
 }
 
-.field {
+.searchFormArea {
   width: clamp(21.375rem, 7.166rem + 63.148vw, 64rem);
   margin-inline: auto;
   translate: 0 -40px;
@@ -24,12 +24,12 @@
 .notFound {
 } */
 
-.buttonWrapper {
+.loadMoreArea {
   margin-block: var(--space-6);
   text-align: center;
 }
 
-.button {
+.loadMoreButton {
   display: inline-block;
   min-width: 200px;
   padding: var(--space-3) var(--space-5);
@@ -46,18 +46,18 @@
 
 /* Interaction */
 @media (hover: hover) and (pointer: fine) {
-  .button:hover {
+  .loadMoreButton:hover {
     color: var(--color-text);
     background-color: var(--color-accent-hover);
     border-color: var(--color-accent-hover);
   }
 }
 
-.button:focus-visible {
+.loadMoreButton:focus-visible {
   outline: var(--color-focus) solid 2px;
   outline-offset: 2px;
 }
 
-.button:active {
+.loadMoreButton:active {
   color: var(--color-accent-active);
 }

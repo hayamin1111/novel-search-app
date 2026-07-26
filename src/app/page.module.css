@@ -29,13 +29,13 @@
   align-items: center;
 }
 
-.svg {
+.serviceIcon {
   flex-shrink: 0;
   width: var(--font-size-lg);
   color: var(--color-text-sub);
 }
 
-.catch {
+.tagline {
   font-size: var(--font-size-sm);
   color: var(--color-text-sub);
   letter-spacing: 0.05em;

@@ -31,16 +31,16 @@ export default function BookSearchForm({ onSearch }: Props) {
         name="search"
         placeholder="タイトルを入力"
         aria-label="書籍タイトルを検索"
-        className={styles.input}
+        className={styles.searchInput}
       />
-      <button type="submit" aria-label="検索" className={styles.button}>
+      <button type="submit" aria-label="検索" className={styles.submitButton}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="100%"
           height="100%"
           viewBox="0 0 512 512"
           fill="currentColor"
-          className={styles.svg}
+          className={styles.searchIcon}
         >
           <path
             d="M449.803,62.197C408.443,20.807,353.85-0.037,299.646-0.006C245.428-0.037,190.85,20.807,149.49,62.197
