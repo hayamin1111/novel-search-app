@@ -1,7 +1,5 @@
 .searchPanel {
-  padding-block-end: var(--space-5);
-  padding-inline: var(--space-5);
-  margin-block-start: 60px;
+  padding-block: var(--space-4) var(--space-7);
   background-color: var(--color-page);
   border-radius: var(--radius-lg);
 }
@@ -9,20 +7,29 @@
 .searchFormArea {
   width: clamp(21.375rem, 7.166rem + 63.148vw, 64rem);
   margin-inline: auto;
-  translate: 0 -40px;
+  translate: 0 calc(var(--space-7) * -1);
 }
 
-/* .error {
+.resultStatus {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(10rem, 8rem + 8vw, 16rem);
+  color: var(--color-text-muted);
 }
 
-.text {
+.resultStatusIcon {
+  width: var(--font-size-md);
+  height: auto;
+  aspect-ratio: 1/1;
 }
 
-.loading {
+.searchLoading {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
 }
-
-.notFound {
-} */
 
 .loadMoreArea {
   margin-block: var(--space-6);
@@ -30,8 +37,11 @@
 }
 
 .loadMoreButton {
-  display: inline-block;
-  min-width: 200px;
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
   padding: var(--space-3) var(--space-5);
   font-weight: var(--font-weight-bold);
   color: var(--color-accent);
@@ -42,6 +52,12 @@
     color var(--transition-base),
     border-color var(--transition-base),
     background-color var(--transition-base);
+}
+
+.loadMoreIcon {
+  width: var(--font-size-md);
+  height: auto;
+  aspect-ratio: 1/1;
 }
 
 /* Interaction */

@@ -38,24 +38,12 @@
 }
 
 .searchIcon {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
-.visuallyHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  white-space: nowrap;
-  border: 0;
-  clip-path: inset(50%);
+  width: var(--font-size-md);
+  height: auto;
+  aspect-ratio: 1/1;
 }
 
 /* Interaction */
-
 @media (hover: hover) and (pointer: fine) {
   .searchInput:hover {
     border-color: var(--color-line-strong);

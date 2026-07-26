@@ -28,7 +28,7 @@
   display: -webkit-box;
   margin: 0;
   overflow: hidden;
-  -webkit-line-clamp: 3;
+  line-clamp: 3;
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-heading);
@@ -69,7 +69,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .coverArea {

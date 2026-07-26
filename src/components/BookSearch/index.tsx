@@ -5,6 +5,9 @@ import type { Book } from "@/types/book";
 import { searchBooks } from "@/lib/googleBooksApi";
 import BookSearchForm from "@/components/BookSearch/BookSearchForm";
 import BookSearchResults from "@/components/BookSearch/BookSearchResults";
+import SearchIcon from "@/components/icon/SearchIcon";
+import BookOpenIcon from "@/components/icon/BookOpenIcon";
+import LoadingIcon from "@/components/icon/LoadingIcon";
 
 export default function BookSearch() {
   // 状態管理
@@ -118,9 +121,24 @@ export default function BookSearch() {
           {error && <p className={styles.searchError}>{error}</p>}
         </div>
         <div className={styles.searchResultArea}>
-          {isInitial && <p className={styles.searchPrompt}>キーワードを入力してください。</p>}
-          {isLoading && <p className={styles.searchLoading}>検索中...</p>}
-          {isEmpty && <p className={styles.emptyMessage}>該当する書籍が見つかりませんでした。</p>}
+          {isInitial && (
+            <div className={styles.resultStatus}>
+              <SearchIcon className={styles.resultStatusIcon} />
+              <p className={styles.resultStatusText}>タイトルを入力して本を探してみましょう。</p>
+            </div>
+          )}
+          {isLoading && (
+            <div className={styles.resultStatus}>
+              <LoadingIcon className={styles.resultStatusIcon} />
+              <p className={styles.resultStatusText}>検索中...</p>
+            </div>
+          )}
+          {isEmpty && (
+            <div className={styles.resultStatus}>
+              <BookOpenIcon className={styles.resultStatusIcon} />
+              <p className={styles.resultStatusText}>該当する書籍が見つかりませんでした。</p>
+            </div>
+          )}
           {hasResults && <BookSearchResults books={books} />}
         </div>
         {hasMore && (
@@ -131,7 +149,17 @@ export default function BookSearch() {
               disabled={isLoadingMore}
               className={styles.loadMoreButton}
             >
-              {isLoadingMore ? "追加読み込み中..." : "+ さらに見る"}
+              {isLoadingMore ? (
+                <>
+                  <LoadingIcon className={styles.loadMoreIcon} />
+                  <span>追加読み込み中...</span>
+                </>
+              ) : (
+                <>
+                  <span aria-hidden="true">＋</span>
+                  <span>さらに見る</span>
+                </>
+              )}
             </button>
           </div>
         )}

@@ -3,7 +3,7 @@
   grid-template-rows: auto 1fr auto;
   width: min(100%, var(--container-width));
   min-height: 100svh;
-  padding-block: var(--space-7) var(--space-2);
+  padding-block: var(--space-6) var(--space-2);
   margin-inline: auto;
 }
 
@@ -42,7 +42,7 @@
 }
 
 .lead {
-  margin-block-start: var(--space-6);
+  margin-block: var(--space-6) var(--space-8);
   color: var(--color-text-sub);
   text-align: center;
 }
