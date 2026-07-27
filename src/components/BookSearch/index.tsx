@@ -120,7 +120,7 @@ export default function BookSearch() {
           <BookSearchForm onSearch={handleSearch} />
           {error && <p className={styles.searchError}>{error}</p>}
         </div>
-        <div className={styles.searchResultArea}>
+        <div className={styles.searchResultArea} aria-live="polite" aria-atomic="true">
           {isInitial && (
             <div className={styles.resultStatus}>
               <SearchIcon className={styles.resultStatusIcon} />

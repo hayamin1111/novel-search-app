@@ -1,5 +1,5 @@
 .searchPanel {
-  padding-block: var(--space-4) var(--space-7);
+  padding: var(--space-3) var(--space-4) var(--space-7);
   background-color: var(--color-page);
   border-radius: var(--radius-lg);
 }
