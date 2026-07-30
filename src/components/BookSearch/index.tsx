@@ -8,6 +8,7 @@ import BookSearchResults from "@/components/BookSearch/BookSearchResults";
 import SearchIcon from "@/components/icon/SearchIcon";
 import BookOpenIcon from "@/components/icon/BookOpenIcon";
 import LoadingIcon from "@/components/icon/LoadingIcon";
+import ErrorIcon from "@/components/icon/ErrorIcon";
 
 export default function BookSearch() {
   // 状態管理
@@ -118,7 +119,12 @@ export default function BookSearch() {
       <div className={styles.searchPanel}>
         <div className={styles.searchFormArea}>
           <BookSearchForm onSearch={handleSearch} />
-          {error && <p className={styles.searchError}>{error}</p>}
+          {error && (
+            <p className={styles.searchError}>
+              <ErrorIcon className={styles.errorIcon} />
+              {error}
+            </p>
+          )}
         </div>
         <div className={styles.searchResultArea} aria-live="polite" aria-atomic="true">
           {isInitial && (

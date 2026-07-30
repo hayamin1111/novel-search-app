@@ -5,6 +5,8 @@ import Link from "next/link";
 import { getBookDetail } from "@/lib/googleBooksApi";
 import type { BookDetail } from "@/types/book";
 import BookDetailContent from "@/components/BookDetail/BookDetailContent";
+import LoadingIcon from "@/components/icon/LoadingIcon";
+import Header from "@/components/Header";
 
 type Props = {
   id: string;
@@ -42,14 +44,27 @@ export default function BookDetail({ id }: Props) {
 
   return (
     <>
-      {isLoading && <p className={styles.detailLoading}>読み込み中...</p>}
-      {error && <p className={styles.detailError}>{error}</p>}
-      {isNotFound && <p className={styles.detailNotFound}>書籍情報が見つかりませんでした</p>}
-      {/* ↓stateが「BookDetail | null」なので、変数にはせずbookを使う前に直接nullチェックする */}
-      {!isLoading && !error && book !== null && <BookDetailContent book={book} />}
-      <Link href="/" className={styles.backLink}>
-        検索に戻る
-      </Link>
+      <Header />
+      <main className={styles.detailPage}>
+        <div className={styles.detailContainer}>
+          {isLoading && (
+            <div className={styles.detailStatus}>
+              <LoadingIcon className={styles.detailStatusIcon} />
+              <p className={styles.detailStatusText}>読み込み中...</p>
+            </div>
+          )}
+          {error && <p className={styles.detailError}>{error}</p>}
+          {isNotFound && <p className={styles.detailNotFound}>書籍情報が見つかりませんでした</p>}
+          {/* ↓stateが「BookDetail | null」なので、変数にはせずbookを使う前に直接nullチェックする */}
+          {!isLoading && !error && book !== null && <BookDetailContent book={book} />}
+        </div>
+        <div className={styles.backLinkArea}>
+          <Link href="/" className={styles.backLink}>
+            <span aria-hidden="true">←</span>
+            検索結果に戻る
+          </Link>
+        </div>
+      </main>
     </>
   );
 }

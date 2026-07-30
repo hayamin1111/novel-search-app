@@ -1,3 +1,74 @@
-.descriptionText {
-  white-space: pre-line;
+.detailPage {
+  min-height: 100dvh;
+  padding-block: clamp(var(--space-6), 8vw, var(--space-8));
+  padding-inline: var(--page-padding);
+  color: var(--color-text-base);
+  background-color: var(--color-page);
+}
+
+.detailContainer {
+  width: min(100%, var(--container-width));
+  margin-inline: auto;
+}
+
+.detailError,
+.detailNotFound {
+  width: min(100%, 42rem);
+  padding-block: var(--space-7);
+  margin-inline: auto;
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+}
+
+.detailStatus {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  color: var(--color-text-muted);
+}
+
+.detailStatusIcon {
+  width: var(--font-size-md);
+  height: auto;
+  aspect-ratio: 1/1;
+}
+
+.loadMoreIcon {
+  width: var(--font-size-md);
+  height: auto;
+  aspect-ratio: 1/1;
+}
+
+.detailError {
+  color: var(--color-error);
+}
+
+.backLinkArea {
+  padding-block-start: var(--space-6);
+  border-top: 1px solid var(--color-line);
+}
+
+.backLink {
+  display: inline-flex;
+  column-gap: var(--space-2);
+  align-items: center;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+/* Interaction */
+@media (hover: hover) and (pointer: fine) {
+  .backLink:hover {
+    color: var(--color-primary-dark);
+  }
+}
+
+.backLink:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
 }

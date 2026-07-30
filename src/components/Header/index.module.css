@@ -1,0 +1,23 @@
+.headerLogoArea {
+  width: min(100%, var(--container-width));
+  padding: var(--space-1) var(--space-2);
+  margin-inline: auto;
+  text-align: left;
+}
+
+.headerLogo {
+  margin-block-end: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-ml);
+  line-height: 1;
+  color: var(--color-text);
+  text-decoration: none;
+  background-color: var(--color-primary);
+  transition: color var(--transition);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .headerLogo:hover {
+    color: var(--color-text-sub);
+  }
+}

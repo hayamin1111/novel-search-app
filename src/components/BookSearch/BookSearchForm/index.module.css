@@ -15,7 +15,7 @@
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition);
 }
 
 .searchInput::placeholder {
@@ -29,12 +29,12 @@
   width: calc(var(--space-2) * 2 + 1em * var(--line-height-base) + 2px);
   aspect-ratio: 1/1;
   color: var(--color-surface);
-  background-color: var(--color-accent);
+  background-color: var(--color-primary);
   border: none;
   border-radius: var(--radius-md);
   transition:
-    background-color var(--transition-fast),
-    color var(--transition-fast);
+    background-color var(--transition),
+    color var(--transition);
 }
 
 .searchIcon {
@@ -50,7 +50,7 @@
   }
 
   .submitButton:hover {
-    background-color: var(--color-accent-hover);
+    background-color: var(--color-primary-dark);
   }
 }
 
@@ -65,5 +65,5 @@
 }
 
 .submitButton:active {
-  color: var(--color-accent-active);
+  color: var(--color-primary-dark);
 }

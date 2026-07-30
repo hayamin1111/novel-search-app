@@ -10,7 +10,7 @@ html {
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
@@ -78,7 +78,7 @@ a {
 :root {
   /* Colors */
   --color-primary: #2a9150;
-  --color-primary-dark: #21713f;
+  --color-primary-dark: #005827;
   --color-bg: var(--color-primary);
   --color-surface: #fff;
   --color-surface-muted: #f1f7ef;
@@ -98,12 +98,6 @@ a {
   --color-line: #cfe0d0;
   --color-line-strong: #8fba94;
 
-  /* Accent */
-  --color-accent: #1f7a37;
-  --color-accent-hover: #17642c;
-  --color-accent-active: #104d21;
-  --color-accent-light: #e5f5e4;
-
   /* Feedback */
   --color-focus: #ffcf33;
   --color-error: #b3261e;
@@ -118,8 +112,9 @@ a {
   --font-size-base: clamp(1rem, 0.985rem + 0.064vw, 1.0625rem);
   --font-size-md: clamp(1.125rem, 1.096rem + 0.128vw, 1.25rem);
   --font-size-lg: clamp(1.375rem, 1.288rem + 0.384vw, 1.75rem);
-  --font-size-xl: clamp(3.125rem, 2.692rem + 1.923vw, 5rem);
-  --line-height-base: 1.7;
+  --font-size-xl: clampclamp(2rem, 1.596rem + 1.794vw, 3.75rem);
+  --font-size-xxl: clamp(3.125rem, 2.692rem + 1.923vw, 5rem);
+  --line-height-base: 1.6;
   --line-height-heading: 1.35;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -145,14 +140,17 @@ a {
   --radius-lg: 1rem;
   --radius-full: 9999px;
 
-  /* Shadow */
-  --shadow-sm: 0 1px 3px rgb(28 34 30 / 8%);
-  --shadow-md: 0 8px 24px rgb(28 34 30 / 10%);
-
   /* Transition */
-  --transition-fast: 150ms ease;
-  --transition-base: 200ms ease;
+  --transition: 200ms ease;
 
   /* light mode */
   color-scheme: light;
+}
+
+.container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: min(100%, var(--container-width));
+  min-height: 100dvh;
+  margin-inline: auto;
 }

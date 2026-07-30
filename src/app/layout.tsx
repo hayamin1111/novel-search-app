@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Righteous } from "next/font/google";
 import "./globals.css";
+import Footer from "@/components/Footer";
 
 const righteous = Righteous({
   subsets: ["latin"],
@@ -21,7 +22,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={righteous.variable}>
-      <body>{children}</body>
+      <body>
+        <div className="container">
+          {children}
+          <Footer />
+        </div>
+      </body>
     </html>
   );
 }
