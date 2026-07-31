@@ -76,16 +76,13 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
   text-decoration: none;
-  background-color: var(--color-primary-dark);
+  background-color: var(--color-primary);
   border-radius: var(--radius-md);
-  transition:
-    background-color var(--transition),
-    translate var(--transition);
+  transition: background-color var(--transition);
 }
 
 .externalLinkIcon {
-  font-size: 1.1em;
-  line-height: 1;
+  font-size: var(--font-size-md);
 }
 
 .descriptionSection {
@@ -108,16 +105,16 @@
   white-space: pre-line;
 }
 
-.externalLink:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 4px;
-}
-
 /* Interaction */
 @media (hover: hover) and (pointer: fine) {
   .externalLink:hover {
     background-color: var(--color-primary-dark);
   }
+}
+
+.externalLink:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
 }
 
 /* Mediaquery */
@@ -131,11 +128,9 @@
     margin-inline: auto;
   }
 
-  .detailContent {
-    padding-block-start: 0;
-  }
-
   .externalLink {
+    display: block;
     width: min(100%, 20rem);
+    margin-inline: auto;
   }
 }
