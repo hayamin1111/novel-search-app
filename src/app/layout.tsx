@@ -11,7 +11,7 @@ const righteous = Righteous({
 });
 
 export const metadata: Metadata = {
-  title: "Book Finder - 気になる本をタイトルから探せる -",
+  title: "Book Finder | 気になる本をタイトルから探せる",
   description: "気になる本をタイトルから探せる書籍検索サービスです。",
 };
 
