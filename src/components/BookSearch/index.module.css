@@ -10,7 +10,8 @@
   translate: 0 calc(var(--space-7) * -1);
 }
 
-.searchError {
+.searchError,
+.loadMoreError {
   display: flex;
   gap: var(--space-2);
   align-items: center;
@@ -32,7 +33,7 @@
   gap: var(--space-2);
   align-items: center;
   justify-content: center;
-  min-height: clamp(10rem, 8rem + 8vw, 16rem);
+  min-height: clamp(2rem, 4rem + 8vw, 8rem);
   color: var(--color-text-muted);
 }
 

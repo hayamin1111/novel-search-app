@@ -20,16 +20,16 @@ export default function BookDetailContent({ book }: Props) {
               <Image
                 src={book.thumbnail}
                 alt={`${book.title}の表紙`}
-                width={150}
-                height={200}
+                width={300}
+                height={400}
                 className={styles.coverImage}
               />
             ) : (
               <Image
-                src="/image/dummy.png"
-                alt="表紙なし"
-                width={150}
-                height={200}
+                src="/image/noImage.png"
+                alt=""
+                width={300}
+                height={400}
                 className={styles.coverImage}
               />
             )}
@@ -44,7 +44,7 @@ export default function BookDetailContent({ book }: Props) {
               </div>
               <div className={styles.infoItem}>
                 <dt className={styles.infoLabel}>出版日</dt>
-                <dd className={styles.infoValue}>{book.publishedDate}</dd>
+                <dd className={styles.infoValue}>{book.publishedDate?.replaceAll("-", ".")}</dd>
               </div>
               <div className={styles.infoItem}>
                 <dt className={styles.infoLabel}>ページ数</dt>

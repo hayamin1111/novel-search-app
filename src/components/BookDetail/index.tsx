@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getBookDetail } from "@/lib/googleBooksApi";
 import type { BookDetail } from "@/types/book";
 import BookDetailContent from "@/components/BookDetail/BookDetailContent";
-import LoadingIcon from "@/components/icon/LoadingIcon";
+import LoadingIcon from "@/components/icons/LoadingIcon";
 import Header from "@/components/Header";
 
 type Props = {

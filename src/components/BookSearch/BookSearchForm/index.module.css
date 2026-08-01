@@ -54,7 +54,7 @@
   }
 }
 
-.searchInput:focus {
+.searchInput:focus-visible {
   outline: var(--color-focus) solid 2px;
   outline-offset: 2px;
 }

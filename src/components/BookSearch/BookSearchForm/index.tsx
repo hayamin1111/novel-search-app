@@ -1,6 +1,6 @@
 import styles from "./index.module.css";
 import type { SubmitEvent } from "react";
-import SearchIcon from "@/components/icon/SearchIcon";
+import SearchIcon from "@/components/icons/SearchIcon";
 
 type Props = {
   onSearch: (searchWord: string) => void;

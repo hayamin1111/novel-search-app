@@ -5,10 +5,10 @@ import type { Book } from "@/types/book";
 import { searchBooks } from "@/lib/googleBooksApi";
 import BookSearchForm from "@/components/BookSearch/BookSearchForm";
 import BookSearchResults from "@/components/BookSearch/BookSearchResults";
-import SearchIcon from "@/components/icon/SearchIcon";
-import BookOpenIcon from "@/components/icon/BookOpenIcon";
-import LoadingIcon from "@/components/icon/LoadingIcon";
-import ErrorIcon from "@/components/icon/ErrorIcon";
+import SearchIcon from "@/components/icons/SearchIcon";
+import BookOpenIcon from "@/components/icons/BookOpenIcon";
+import LoadingIcon from "@/components/icons/LoadingIcon";
+import ErrorIcon from "@/components/icons/ErrorIcon";
 
 export default function BookSearch() {
   // 状態管理
@@ -145,6 +145,7 @@ export default function BookSearch() {
               <p className={styles.resultStatusText}>該当する書籍が見つかりませんでした。</p>
             </div>
           )}
+
           {hasResults && <BookSearchResults books={books} />}
         </div>
         {hasMore && (
@@ -169,7 +170,12 @@ export default function BookSearch() {
             </button>
           </div>
         )}
-        {loadMoreError && <p className={styles.loadMoreError}>{loadMoreError}</p>}
+        {loadMoreError && (
+          <p className={styles.loadMoreError}>
+            <ErrorIcon className={styles.errorIcon} />
+            {loadMoreError}
+          </p>
+        )}
       </div>
     </>
   );

@@ -1,5 +1,4 @@
 .detailPage {
-  min-height: 100dvh;
   padding-block: clamp(var(--space-6), 8vw, var(--space-8));
   padding-inline: var(--page-padding);
   color: var(--color-text-base);

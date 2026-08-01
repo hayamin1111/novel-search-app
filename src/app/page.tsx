@@ -1,6 +1,6 @@
 import styles from "./page.module.css";
 import BookSearch from "@/components/BookSearch";
-import BookOpenIcon from "@/components/icon/BookOpenIcon";
+import BookOpenIcon from "@/components/icons/BookOpenIcon";
 
 export default function Home() {
   return (
