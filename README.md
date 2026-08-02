@@ -181,7 +181,7 @@ APIの制限：Books API
 
 http://localhost:3000
 
-## Commands
+## コマンド
 
 ```bash
 # 開発サーバー
