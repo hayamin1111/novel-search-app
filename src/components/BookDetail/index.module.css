@@ -1,8 +1,8 @@
 .detailPage {
-  padding-block: clamp(var(--space-6), 8vw, var(--space-8));
-  padding-inline: var(--page-padding);
+  padding: clamp(var(--space-6), 8vw, var(--space-6)) var(--page-padding);
   color: var(--color-text-base);
   background-color: var(--color-page);
+  border-radius: var(--radius-lg);
 }
 
 .detailContainer {

@@ -9,11 +9,15 @@ Google Books APIを利用して、書籍タイトルから本を検索できるW
 - 公開URL：デプロイ後に追加
 - [リポジトリ](https://github.com/hayamin1111/novel-search-app)
 
-## Screenshot
+## スクリーンショット
 
-<!-- スクリーンショットを追加後、パスを変更してください -->
+### 検索結果画面
 
-![Book Finderのトップページ](./public/images/screenshot-top.png)
+![Book Finderのトップページ](./public/screenshot-top.png)
+
+### 書籍詳細画面
+
+![Book Finderの詳細ページ](./public/screenshot-detail.png)
 
 ## 主な機能
 
