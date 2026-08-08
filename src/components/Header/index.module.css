@@ -1,6 +1,6 @@
 .headerLogoArea {
   width: min(100%, var(--container-width));
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-1) var(--space-4);
   margin-inline: auto;
   text-align: left;
 }

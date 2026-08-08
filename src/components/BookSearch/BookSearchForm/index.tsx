@@ -1,5 +1,8 @@
+// "use client";
+
 import styles from "./index.module.css";
 import type { SubmitEvent } from "react";
+// import { useRouter } from "next/navigation";
 import SearchIcon from "@/components/icons/SearchIcon";
 
 type Props = {
@@ -7,6 +10,7 @@ type Props = {
 };
 
 export default function BookSearchForm({ onSearch }: Props) {
+  // const router = useRouter();
   /**
    * submitを受け取り入力値を親へ渡す
    */
@@ -22,6 +26,12 @@ export default function BookSearchForm({ onSearch }: Props) {
     const searchWord: string = String(value).trim();
 
     onSearch(searchWord);
+
+    // URLにクエリ持たせる
+    // const params = new URLSearchParams({
+    //   q: searchWord,
+    // });
+    // router.push(`/?${params.toString()}`);
   };
 
   return (

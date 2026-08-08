@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Header from "@/components/Header";
 import BookDetail from "@/components/BookDetail";
 
 type Props = {
@@ -17,6 +18,7 @@ export default async function BookDetailPage({ params }: Props) {
   const { id } = await params;
   return (
     <>
+      <Header />
       <BookDetail id={id} />
     </>
   );

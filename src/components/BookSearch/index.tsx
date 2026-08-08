@@ -1,5 +1,6 @@
 "use client";
 import styles from "./index.module.css";
+import stylesFeedback from "@/styles/feedback.module.css";
 import { useState } from "react";
 import type { Book } from "@/types/book";
 import { searchBooks } from "@/lib/googleBooksApi";
@@ -9,6 +10,7 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
+// import { useSearchParams } from "next/navigation";
 
 export default function BookSearch() {
   // 状態管理
@@ -110,6 +112,16 @@ export default function BookSearch() {
     }
   };
 
+  /**
+   * URLのクエリを取得する
+   */
+  // const searchParams = useSearchParams();
+  // const query = searchParams.get("q")?.trim() ?? "";
+  // useEffect(() => {
+  //   if (!query) return;
+  //   handleSearch(query);
+  // }, [query]);
+
   const isInitial = !isLoading && !hasSearched && !error;
   const isEmpty = !isLoading && hasSearched && books.length === 0 && !error;
   const hasResults = books.length > 0;
@@ -120,10 +132,10 @@ export default function BookSearch() {
         <div className={styles.searchFormArea}>
           <BookSearchForm onSearch={handleSearch} />
           {error && (
-            <p className={styles.searchError}>
-              <ErrorIcon className={styles.errorIcon} />
-              {error}
-            </p>
+            <div className={stylesFeedback.error}>
+              <ErrorIcon className={stylesFeedback.errorIcon} />
+              <p className={stylesFeedback.errorText}>{error}</p>
+            </div>
           )}
         </div>
         <div className={styles.searchResultArea} aria-live="polite" aria-atomic="true">
@@ -171,10 +183,10 @@ export default function BookSearch() {
           </div>
         )}
         {loadMoreError && (
-          <p className={styles.loadMoreError}>
-            <ErrorIcon className={styles.errorIcon} />
-            {loadMoreError}
-          </p>
+          <div className={stylesFeedback.error}>
+            <ErrorIcon className={stylesFeedback.errorIcon} />
+            <p className={stylesFeedback.errorText}>{loadMoreError}</p>
+          </div>
         )}
       </div>
     </>

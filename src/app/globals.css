@@ -112,7 +112,7 @@ a {
   --font-size-base: clamp(1rem, 0.985rem + 0.064vw, 1.0625rem);
   --font-size-md: clamp(1.125rem, 1.096rem + 0.128vw, 1.25rem);
   --font-size-lg: clamp(1.375rem, 1.288rem + 0.384vw, 1.75rem);
-  --font-size-xl: clampclamp(2rem, 1.596rem + 1.794vw, 3.75rem);
+  --font-size-xl: clamp(2rem, 1.596rem + 1.794vw, 3.75rem);
   --font-size-xxl: clamp(3.125rem, 2.692rem + 1.923vw, 5rem);
   --line-height-base: 1.6;
   --line-height-heading: 1.35;

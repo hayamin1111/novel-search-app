@@ -1,12 +1,12 @@
 "use client";
 import styles from "./index.module.css";
+import linkStyles from "@/styles/link.module.css";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getBookDetail } from "@/lib/googleBooksApi";
 import type { BookDetail } from "@/types/book";
 import BookDetailContent from "@/components/BookDetail/BookDetailContent";
 import LoadingIcon from "@/components/icons/LoadingIcon";
-import Header from "@/components/Header";
 
 type Props = {
   id: string;
@@ -44,7 +44,6 @@ export default function BookDetail({ id }: Props) {
 
   return (
     <>
-      <Header />
       <main className={styles.detailPage}>
         <div className={styles.detailContainer}>
           {isLoading && (
@@ -58,8 +57,8 @@ export default function BookDetail({ id }: Props) {
           {/* ↓stateが「BookDetail | null」なので、変数にはせずbookを使う前に直接nullチェックする */}
           {!isLoading && !error && book !== null && <BookDetailContent book={book} />}
         </div>
-        <div className={styles.backLinkArea}>
-          <Link href="/" className={styles.backLink}>
+        <div className={linkStyles.backLinkArea}>
+          <Link href="/" className={linkStyles.backLink}>
             <span aria-hidden="true">←</span>
             検索結果に戻る
           </Link>
