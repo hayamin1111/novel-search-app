@@ -6,9 +6,10 @@ import type { Book } from "@/types/book";
 type Props = {
   books: Book[];
   searchWord: string;
+  onNavigateToDetail: () => void;
 };
 
-export default function BookSearchResults({ books, searchWord }: Props) {
+export default function BookSearchResults({ books, searchWord, onNavigateToDetail }: Props) {
   return (
     <>
       <div className={styles.cardList}>
@@ -66,6 +67,7 @@ export default function BookSearchResults({ books, searchWord }: Props) {
                   pathname: `/books/${book.id}`,
                   query: { q: searchWord },
                 }}
+                onNavigate={onNavigateToDetail}
                 className={styles.detailLink}
               >
                 詳細を見る <span aria-hidden="true">→</span>

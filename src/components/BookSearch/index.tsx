@@ -2,7 +2,9 @@
 import styles from "./index.module.css";
 import stylesFeedback from "@/styles/feedback.module.css";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Book } from "@/types/book";
+import type { SearchSnapshot } from "@/types/searchSnapshot";
 import { searchBooks } from "@/lib/googleBooksApi";
 import BookSearchForm from "@/components/BookSearch/BookSearchForm";
 import BookSearchResults from "@/components/BookSearch/BookSearchResults";
@@ -10,7 +12,22 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
-import { useSearchParams } from "next/navigation";
+
+/**
+ * ブラウザバック時の処理のためにsessionStorageへ保存
+ * （通常検索成功時、追加取得成功時、詳細ページ遷移前のスクロール位置）
+ */
+const SEARCH_SNAPSHOT_KEY = "bookSearchSnapshot";
+// const saveSearchSnapshot = (query, books, nextStartIndex, hasMore, scrollY, savedAt) => {
+//   const searchSnapshot: SearchSnapshot = {
+//     query: query,
+//     books: books,
+//     nextStartIndex: nextStartIndex,
+//     hasMore: hasMore,
+//     scrollY: scrollY,
+//     savedAt: savedAt,
+//   };
+// };
 
 export default function BookSearch() {
   // 状態管理
@@ -23,6 +40,8 @@ export default function BookSearch() {
   const [hasMore, setHasMore] = useState(false); //「さらに見る」用
   const [isLoadingMore, setIsLoadingMore] = useState(false); //「さらに見る」用ローディング
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null); //「さらに見る」の追加取得エラー
+
+  // const SnapshotContext = useContext<SearchSnapshot | undefined>(undefined);
 
   const searchParams = useSearchParams();
   const defaultSearchWord = searchParams.get("q")?.trim() ?? "";
@@ -97,21 +116,6 @@ export default function BookSearch() {
   };
 
   /**
-   * 初回の初期化処理／URLのクエリを取得
-   */
-  useEffect(() => {
-    // パラメータをURLから取得
-    const searchParams = new URLSearchParams(window.location.search);
-    const query = searchParams.get("q")?.trim() ?? "";
-
-    if (!query) return;
-
-    void executeSearch(query); //戻り値をundefinedにするため
-
-    // sessionStorageの処理追加
-  }, []);
-
-  /**
    * 「さらに見る」用の検索
    */
   const handleSearchMore = async () => {
@@ -152,6 +156,40 @@ export default function BookSearch() {
     }
   };
 
+  /**
+   * 検索状態を保存（ブラウザバック対策）
+   */
+  const saveSearchSnapshot = () => {
+    const snapshot: SearchSnapshot = {
+      query: submittedSearchWord,
+      books,
+      nextStartIndex,
+      hasMore,
+      scrollY: window.scrollY,
+      savedAt: Date.now(),
+    };
+
+    sessionStorage.setItem(SEARCH_SNAPSHOT_KEY, JSON.stringify(snapshot));
+  };
+
+  /**
+   * 初回の初期化処理／URLのクエリを取得
+   */
+  useEffect(() => {
+    // パラメータをURLから取得
+    const searchParams = new URLSearchParams(window.location.search);
+    const query = searchParams.get("q")?.trim() ?? "";
+
+    if (!query) return;
+
+    void executeSearch(query); //戻り値をundefinedにするため
+  }, []);
+
+  // useEffect(() => {
+  //   saveSearchSnapshot(); // sessionStorageの処理
+  //   // console.log(snapshot);
+  // }, [saveSearchSnapshot]);
+
   const isInitial = !isLoading && !hasSearched && !error;
   const isEmpty = !isLoading && hasSearched && books.length === 0 && !error;
   const hasResults = books.length > 0;
@@ -188,7 +226,13 @@ export default function BookSearch() {
             </div>
           )}
 
-          {hasResults && <BookSearchResults books={books} searchWord={submittedSearchWord} />}
+          {hasResults && (
+            <BookSearchResults
+              books={books}
+              searchWord={submittedSearchWord}
+              onNavigateToDetail={saveSearchSnapshot}
+            />
+          )}
         </div>
         {hasMore && (
           <div className={styles.loadMoreArea}>
