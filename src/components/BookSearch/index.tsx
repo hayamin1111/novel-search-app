@@ -1,7 +1,7 @@
 "use client";
 import styles from "./index.module.css";
 import stylesFeedback from "@/styles/feedback.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Book } from "@/types/book";
 import { searchBooks } from "@/lib/googleBooksApi";
 import BookSearchForm from "@/components/BookSearch/BookSearchForm";
@@ -10,7 +10,6 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
-// import { useSearchParams } from "next/navigation";
 
 export default function BookSearch() {
   // 状態管理
@@ -28,8 +27,19 @@ export default function BookSearch() {
    * 通常の検索
    */
   const handleSearch = async (searchWord: string) => {
+    // 検索ワードをパラメータとして設定
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("q", searchWord);
+
     // 空文字処理
     if (searchWord === "") {
+      // クエリの削除
+      searchParams.delete("q");
+      const queryString = searchParams.toString();
+      const url = queryString ? `/?${queryString}` : window.location.pathname;
+      window.history.replaceState(null, "", url);
+
+      // 状態の初期化
       setBooks([]);
       setHasSearched(false);
       setError(null);
@@ -38,9 +48,21 @@ export default function BookSearch() {
       setHasMore(false);
       setIsLoadingMore(false);
       setLoadMoreError(null);
+
       return;
     }
 
+    // 検索実行
+    executeSearch(searchWord);
+
+    // URLのクエリを設定
+    window.history.replaceState(null, "", `/?${searchParams.toString()}`);
+  };
+
+  /**
+   * 通常検索
+   */
+  const executeSearch = async (searchWord: string) => {
     // 初期化
     setIsLoading(true);
     setBooks([]); //前回検索結果は削除
@@ -50,8 +72,7 @@ export default function BookSearch() {
     setHasMore(false);
     setIsLoadingMore(false);
     setLoadMoreError(null);
-
-    setSubmittedSearchWord(searchWord);
+    setSubmittedSearchWord(searchWord); //「さらに見る」用に検索ワードを保存
 
     try {
       // 文字列検索
@@ -70,6 +91,21 @@ export default function BookSearch() {
       setIsLoading(false);
     }
   };
+
+  /**
+   * 初回の初期化処理／URLのクエリを取得
+   */
+  useEffect(() => {
+    // パラメータをURLから取得
+    const searchParams = new URLSearchParams(window.location.search);
+    const query = searchParams.get("q")?.trim() ?? "";
+
+    if (!query) return;
+
+    void executeSearch(query); //戻り値をundefinedにするため
+
+    // sessionStorageの処理追加
+  }, []);
 
   /**
    * 「さらに見る」用の検索
@@ -111,16 +147,6 @@ export default function BookSearch() {
       setIsLoadingMore(false);
     }
   };
-
-  /**
-   * URLのクエリを取得する
-   */
-  // const searchParams = useSearchParams();
-  // const query = searchParams.get("q")?.trim() ?? "";
-  // useEffect(() => {
-  //   if (!query) return;
-  //   handleSearch(query);
-  // }, [query]);
 
   const isInitial = !isLoading && !hasSearched && !error;
   const isEmpty = !isLoading && hasSearched && books.length === 0 && !error;
