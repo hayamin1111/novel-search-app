@@ -6,6 +6,9 @@ type Props = {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{
+    q?: string | string[];
+  }>;
 };
 
 export const metadata: Metadata = {
@@ -13,13 +16,17 @@ export const metadata: Metadata = {
   description: "Book Finderの書籍詳細ページです。",
 };
 
-export default async function BookDetailPage({ params }: Props) {
+export default async function BookDetailPage({ params, searchParams }: Props) {
   // paramsはPromise型なので解決してから値を使用する
   const { id } = await params;
+
+  const { q } = await searchParams;
+  const searchWord = typeof q === "string" ? q.trim() : "";
+
   return (
     <>
       <Header />
-      <BookDetail id={id} />
+      <BookDetail id={id} searchWord={searchWord} />
     </>
   );
 }

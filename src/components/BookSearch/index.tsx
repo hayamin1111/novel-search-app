@@ -188,7 +188,7 @@ export default function BookSearch() {
             </div>
           )}
 
-          {hasResults && <BookSearchResults books={books} />}
+          {hasResults && <BookSearchResults books={books} searchWord={submittedSearchWord} />}
         </div>
         {hasMore && (
           <div className={styles.loadMoreArea}>

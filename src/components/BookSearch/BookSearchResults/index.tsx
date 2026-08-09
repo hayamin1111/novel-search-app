@@ -5,9 +5,10 @@ import type { Book } from "@/types/book";
 
 type Props = {
   books: Book[];
+  searchWord: string;
 };
 
-export default function BookSearchResults({ books }: Props) {
+export default function BookSearchResults({ books, searchWord }: Props) {
   return (
     <>
       <div className={styles.cardList}>
@@ -60,7 +61,13 @@ export default function BookSearchResults({ books }: Props) {
                   </span>
                 </li>
               </ul>
-              <Link href={`/books/${book.id}`} className={styles.detailLink}>
+              <Link
+                href={{
+                  pathname: `/books/${book.id}`,
+                  query: { q: searchWord },
+                }}
+                className={styles.detailLink}
+              >
                 詳細を見る <span aria-hidden="true">→</span>
               </Link>
             </div>

@@ -10,12 +10,13 @@ import LoadingIcon from "@/components/icons/LoadingIcon";
 
 type Props = {
   id: string;
+  searchWord: string;
 };
 
 /**
  * データ取得と状態管理担当
  */
-export default function BookDetail({ id }: Props) {
+export default function BookDetail({ id, searchWord }: Props) {
   // 状態管理
   const [book, setBook] = useState<BookDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +43,14 @@ export default function BookDetail({ id }: Props) {
 
   const isNotFound = !isLoading && !error && book === null;
 
+  //searchWordが空文字ならq非表示
+  const backHref = searchWord
+    ? {
+        pathname: "/",
+        query: { q: searchWord },
+      }
+    : "/";
+
   return (
     <>
       <main className={styles.detailPage}>
@@ -58,7 +67,7 @@ export default function BookDetail({ id }: Props) {
           {!isLoading && !error && book !== null && <BookDetailContent book={book} />}
         </div>
         <div className={linkStyles.backLinkArea}>
-          <Link href="/" className={linkStyles.backLink}>
+          <Link href={backHref} className={linkStyles.backLink}>
             <span aria-hidden="true">←</span>
             検索結果に戻る
           </Link>
