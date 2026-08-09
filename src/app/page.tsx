@@ -1,6 +1,7 @@
 import styles from "./page.module.css";
 import BookSearch from "@/components/BookSearch";
 import BookOpenIcon from "@/components/icons/BookOpenIcon";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -14,7 +15,9 @@ export default function Home() {
       </header>
       <main>
         <p className={styles.lead}>気になる本をタイトルから検索できます。</p>
-        <BookSearch />
+        <Suspense fallback={null}>
+          <BookSearch />
+        </Suspense>
       </main>
     </>
   );

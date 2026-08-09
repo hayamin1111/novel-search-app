@@ -2,15 +2,14 @@
 
 import styles from "./index.module.css";
 import type { SubmitEvent } from "react";
-// import { useRouter } from "next/navigation";
 import SearchIcon from "@/components/icons/SearchIcon";
 
 type Props = {
+  defaultSearchWord: string;
   onSearch: (searchWord: string) => void;
 };
 
-export default function BookSearchForm({ onSearch }: Props) {
-  // const router = useRouter();
+export default function BookSearchForm({ defaultSearchWord, onSearch }: Props) {
   /**
    * submitを受け取り入力値を親へ渡す
    */
@@ -26,12 +25,6 @@ export default function BookSearchForm({ onSearch }: Props) {
     const searchWord: string = String(value).trim();
 
     onSearch(searchWord);
-
-    // URLにクエリ持たせる
-    // const params = new URLSearchParams({
-    //   q: searchWord,
-    // });
-    // router.push(`/?${params.toString()}`);
   };
 
   return (
@@ -41,6 +34,7 @@ export default function BookSearchForm({ onSearch }: Props) {
         type="search"
         name="search"
         placeholder="タイトルを入力"
+        defaultValue={defaultSearchWord}
         aria-label="書籍タイトルを検索"
         className={styles.searchInput}
       />

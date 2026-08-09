@@ -10,6 +10,7 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
+import { useSearchParams } from "next/navigation";
 
 export default function BookSearch() {
   // 状態管理
@@ -23,11 +24,14 @@ export default function BookSearch() {
   const [isLoadingMore, setIsLoadingMore] = useState(false); //「さらに見る」用ローディング
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null); //「さらに見る」の追加取得エラー
 
+  const searchParams = useSearchParams();
+  const defaultSearchWord = searchParams.get("q")?.trim() ?? "";
+
   /**
    * 通常の検索
    */
   const handleSearch = async (searchWord: string) => {
-    // 検索ワードをパラメータとして設定
+    // 検索ワードをクエリパラメータとして設定
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set("q", searchWord);
 
@@ -60,7 +64,7 @@ export default function BookSearch() {
   };
 
   /**
-   * 通常検索
+   * 検索実行
    */
   const executeSearch = async (searchWord: string) => {
     // 初期化
@@ -156,7 +160,7 @@ export default function BookSearch() {
     <>
       <div className={styles.searchPanel}>
         <div className={styles.searchFormArea}>
-          <BookSearchForm onSearch={handleSearch} />
+          <BookSearchForm onSearch={handleSearch} defaultSearchWord={defaultSearchWord} />
           {error && (
             <div className={stylesFeedback.error}>
               <ErrorIcon className={stylesFeedback.errorIcon} />
