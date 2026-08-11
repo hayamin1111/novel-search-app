@@ -13,21 +13,8 @@ import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
 
-/**
- * ブラウザバック時の処理のためにsessionStorageへ保存
- * （通常検索成功時、追加取得成功時、詳細ページ遷移前のスクロール位置）
- */
+// ブラウザバック時の処理のためにsessionStorageへ保存するキー
 const SEARCH_SNAPSHOT_KEY = "bookSearchSnapshot";
-// const saveSearchSnapshot = (query, books, nextStartIndex, hasMore, scrollY, savedAt) => {
-//   const searchSnapshot: SearchSnapshot = {
-//     query: query,
-//     books: books,
-//     nextStartIndex: nextStartIndex,
-//     hasMore: hasMore,
-//     scrollY: scrollY,
-//     savedAt: savedAt,
-//   };
-// };
 
 export default function BookSearch() {
   // 状態管理
@@ -40,8 +27,6 @@ export default function BookSearch() {
   const [hasMore, setHasMore] = useState(false); //「さらに見る」用
   const [isLoadingMore, setIsLoadingMore] = useState(false); //「さらに見る」用ローディング
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null); //「さらに見る」の追加取得エラー
-
-  // const SnapshotContext = useContext<SearchSnapshot | undefined>(undefined);
 
   const searchParams = useSearchParams();
   const defaultSearchWord = searchParams.get("q")?.trim() ?? "";
@@ -184,11 +169,6 @@ export default function BookSearch() {
 
     void executeSearch(query); //戻り値をundefinedにするため
   }, []);
-
-  // useEffect(() => {
-  //   saveSearchSnapshot(); // sessionStorageの処理
-  //   // console.log(snapshot);
-  // }, [saveSearchSnapshot]);
 
   const isInitial = !isLoading && !hasSearched && !error;
   const isEmpty = !isLoading && hasSearched && books.length === 0 && !error;

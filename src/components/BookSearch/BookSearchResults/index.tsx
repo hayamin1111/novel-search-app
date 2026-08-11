@@ -13,7 +13,7 @@ export default function BookSearchResults({ books, searchWord, onNavigateToDetai
   return (
     <>
       <div className={styles.cardList}>
-        {books.map((book) => (
+        {books.map((book, index) => (
           <article key={book.id} className={styles.card}>
             <figure className={styles.coverArea}>
               {book.thumbnail ? (
@@ -22,6 +22,7 @@ export default function BookSearchResults({ books, searchWord, onNavigateToDetai
                   alt=""
                   width={300}
                   height={400}
+                  loading={index === 0 ? "eager" : "lazy"}
                   className={styles.coverImage}
                 />
               ) : (
@@ -30,6 +31,7 @@ export default function BookSearchResults({ books, searchWord, onNavigateToDetai
                   alt=""
                   width={300}
                   height={400}
+                  loading={index < 4 ? "eager" : "lazy"}
                   className={styles.coverImage}
                 />
               )}
