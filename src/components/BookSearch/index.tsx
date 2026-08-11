@@ -1,7 +1,7 @@
 "use client";
 import styles from "./index.module.css";
 import stylesFeedback from "@/styles/feedback.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Book } from "@/types/book";
 import type { SearchSnapshot } from "@/types/searchSnapshot";
@@ -27,6 +27,8 @@ export default function BookSearch() {
   const [hasMore, setHasMore] = useState(false); //「さらに見る」用
   const [isLoadingMore, setIsLoadingMore] = useState(false); //「さらに見る」用ローディング
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null); //「さらに見る」の追加取得エラー
+
+  const restoreScrollYRef = useRef<number | null>(null);
 
   const searchParams = useSearchParams();
   const defaultSearchWord = searchParams.get("q")?.trim() ?? "";
@@ -196,6 +198,8 @@ export default function BookSearch() {
     const snapshot = getSearchSnapshot(query);
 
     if (snapshot) {
+      restoreScrollYRef.current = snapshot.scrollY; //ブラウザバックでスクロール位置を復元
+
       // sessionStorageはブラウザでのみ取得できるため、初回マウント時に一度だけstateへ復元する
       // eslint-disable-next-line react-hooks/set-state-in-effect
       restoreSnapshot(snapshot);
@@ -205,6 +209,18 @@ export default function BookSearch() {
     //クエリで再検索（詳細ページからのブラウザバック対応）
     void executeSearch(query); //戻り値をundefinedにするためのvoid
   }, []);
+
+  useLayoutEffect(() => {
+    const scrollY = restoreScrollYRef.current;
+    if (books.length === 0 || scrollY === null) return;
+
+    window.scrollTo({
+      top: scrollY,
+      behavior: "auto",
+    });
+
+    restoreScrollYRef.current = null; //スクロール復元は一度だけ実行のためnullに戻す
+  }, [books.length]);
 
   const isInitial = !isLoading && !hasSearched && !error;
   const isEmpty = !isLoading && hasSearched && books.length === 0 && !error;

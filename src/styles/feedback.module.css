@@ -3,7 +3,7 @@
   gap: var(--space-2);
   align-items: center;
   padding: var(--space-2) var(--space-3);
-  margin-block-start: var(--space-2);
+  margin-block: var(--space-2) var(--space-3);
   color: var(--color-error);
   background-color: var(--color-error-bg);
   border: 1px solid var(--color-error);
@@ -11,7 +11,7 @@
 }
 
 .errorText {
-  padding-block: 0;
+  margin-block: 0;
 }
 
 .errorIcon {
