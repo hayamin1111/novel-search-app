@@ -154,11 +154,37 @@ export default function BookSearch() {
       savedAt: Date.now(),
     };
 
-    sessionStorage.setItem(SEARCH_SNAPSHOT_KEY, JSON.stringify(snapshot));
+    sessionStorage.setItem(SEARCH_SNAPSHOT_KEY, JSON.stringify(snapshot)); //文字列（JSON）に変換してから保存する
   };
 
   /**
-   * 初回の初期化処理／URLのクエリを取得
+   * sessionStorageを読んで保存したsnapshotを返す
+   */
+  const getSearchSnapshot = (query: string): SearchSnapshot | undefined => {
+    const storedSnapshot = sessionStorage.getItem(SEARCH_SNAPSHOT_KEY); // sessionStorageに保存したキーから検索内容を復元
+    if (!storedSnapshot) return;
+
+    const snapshot = JSON.parse(storedSnapshot); //JSONをオブジェクトに戻す
+
+    // ⭐️後でZod追加
+
+    if (snapshot.query !== query) return; //保存したqueryとURLクエリパラメータが同じか確認
+    return snapshot;
+  };
+
+  /**
+   * sessionStorageに保存したデータを復元してステートに渡す
+   */
+  const restoreSnapshot = (snapshot: SearchSnapshot) => {
+    setBooks(snapshot.books);
+    setSubmittedSearchWord(snapshot.query);
+    setNextStartIndex(snapshot.nextStartIndex);
+    setHasMore(snapshot.hasMore);
+    setHasSearched(true);
+  };
+
+  /**
+   * 初回の初期化処理
    */
   useEffect(() => {
     // パラメータをURLから取得
@@ -167,7 +193,17 @@ export default function BookSearch() {
 
     if (!query) return;
 
-    void executeSearch(query); //戻り値をundefinedにするため
+    const snapshot = getSearchSnapshot(query);
+
+    if (snapshot) {
+      // sessionStorageはブラウザでのみ取得できるため、初回マウント時に一度だけstateへ復元する
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      restoreSnapshot(snapshot);
+      return;
+    }
+
+    //クエリで再検索（詳細ページからのブラウザバック対応）
+    void executeSearch(query); //戻り値をundefinedにするためのvoid
   }, []);
 
   const isInitial = !isLoading && !hasSearched && !error;
