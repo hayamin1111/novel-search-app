@@ -1,6 +1,6 @@
 "use client";
 import styles from "./index.module.css";
-import stylesFeedback from "@/styles/feedback.module.css";
+import feedbackStyles from "@/styles/feedback.module.css";
 import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Book } from "@/types/book";
@@ -270,9 +270,9 @@ export default function BookSearch() {
         <div className={styles.searchFormArea}>
           <BookSearchForm onSearch={handleSearch} defaultSearchWord={defaultSearchWord} />
           {error && (
-            <div className={stylesFeedback.error} role="alert">
-              <ErrorIcon className={stylesFeedback.errorIcon} />
-              <p className={stylesFeedback.errorText}>{error}</p>
+            <div className={feedbackStyles.error} role="alert">
+              <ErrorIcon className={feedbackStyles.errorIcon} />
+              <p className={feedbackStyles.errorText}>{error}</p>
             </div>
           )}
         </div>
@@ -307,7 +307,7 @@ export default function BookSearch() {
                 />
               </>
             )}
-            <p className={styles.screenReader} role="status">
+            <p className={feedbackStyles.visuallyHidden} role="status">
               {statusMessage}
             </p>
           </div>
@@ -335,9 +335,9 @@ export default function BookSearch() {
           </div>
         )}
         {loadMoreError && (
-          <div className={stylesFeedback.error}>
-            <ErrorIcon className={stylesFeedback.errorIcon} />
-            <p className={stylesFeedback.errorText}>{loadMoreError}</p>
+          <div className={feedbackStyles.error}>
+            <ErrorIcon className={feedbackStyles.errorIcon} />
+            <p className={feedbackStyles.errorText}>{loadMoreError}</p>
           </div>
         )}
       </div>

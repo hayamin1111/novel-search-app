@@ -1,4 +1,5 @@
 import styles from "./index.module.css";
+import feedbackStyles from "@/styles/feedback.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import type { Book } from "@/types/book";
@@ -72,7 +73,7 @@ export default function BookSearchResults({ books, searchWord, onNavigateToDetai
                 onNavigate={onNavigateToDetail}
                 className={styles.detailLink}
               >
-                <span className={styles.visuallyHidden}>{book.title}の</span>
+                <span className={feedbackStyles.visuallyHidden}>{book.title}の</span>
                 詳細を見る <span aria-hidden="true">→</span>
               </Link>
             </div>
