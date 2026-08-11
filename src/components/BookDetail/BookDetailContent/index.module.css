@@ -92,14 +92,15 @@
 }
 
 .descriptionTitle {
-  margin-block-end: var(--space-4);
+  width: min(100%, 58rem);
+  margin: 0 auto var(--space-4);
   font-size: var(--font-size-md);
   color: var(--color-primary);
 }
 
 .descriptionText {
   width: min(100%, 58rem);
-  margin: 0;
+  margin: 0 auto;
   line-height: 2;
   color: var(--color-text-base);
   white-space: pre-line;

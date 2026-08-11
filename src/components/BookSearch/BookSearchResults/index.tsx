@@ -72,6 +72,7 @@ export default function BookSearchResults({ books, searchWord, onNavigateToDetai
                 onNavigate={onNavigateToDetail}
                 className={styles.detailLink}
               >
+                <span className={styles.visuallyHidden}>{book.title}の</span>
                 詳細を見る <span aria-hidden="true">→</span>
               </Link>
             </div>

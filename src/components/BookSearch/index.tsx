@@ -13,8 +13,8 @@ import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
 
-// ブラウザバック時の処理のためにsessionStorageへ保存するキー
-const SEARCH_SNAPSHOT_KEY = "bookSearchSnapshot";
+const SEARCH_SNAPSHOT_KEY = "bookSearchSnapshot"; // ブラウザバック時の処理のためにsessionStorageへ保存するキー
+const SEARCH_SNAPSHOT_TTL_MS = 10 * 60 * 1000;
 
 export default function BookSearch() {
   // 状態管理
@@ -58,6 +58,8 @@ export default function BookSearch() {
       setHasMore(false);
       setIsLoadingMore(false);
       setLoadMoreError(null);
+
+      sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
 
       return;
     }
@@ -164,14 +166,37 @@ export default function BookSearch() {
    */
   const getSearchSnapshot = (query: string): SearchSnapshot | undefined => {
     const storedSnapshot = sessionStorage.getItem(SEARCH_SNAPSHOT_KEY); // sessionStorageに保存したキーから検索内容を復元
+
     if (!storedSnapshot) return;
 
-    const snapshot = JSON.parse(storedSnapshot); //JSONをオブジェクトに戻す
+    try {
+      const snapshot: SearchSnapshot = JSON.parse(storedSnapshot); //JSONをオブジェクトに戻す
+      // ⭐️後でZod追加
 
-    // ⭐️後でZod追加
+      const isValidSavedAt =
+        typeof snapshot.savedAt === "number" && Number.isFinite(snapshot.savedAt); //数値型か、有限かチェック
+      if (!isValidSavedAt) {
+        sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
+        return;
+      }
 
-    if (snapshot.query !== query) return; //保存したqueryとURLクエリパラメータが同じか確認
-    return snapshot;
+      const isExpired = Date.now() - snapshot.savedAt >= SEARCH_SNAPSHOT_TTL_MS; //　セッションの有効期限チェック
+      if (isExpired) {
+        sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
+        return;
+      }
+
+      if (snapshot.query !== query) {
+        sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY); //保存したqueryとURLクエリパラメータが同じか確認
+        return;
+      }
+
+      return snapshot;
+    } catch (error) {
+      console.error(error);
+      sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
+      return;
+    }
   };
 
   /**
@@ -226,45 +251,66 @@ export default function BookSearch() {
   const isEmpty = !isLoading && hasSearched && books.length === 0 && !error;
   const hasResults = books.length > 0;
 
+  let statusMessage = "";
+  if (isLoading) {
+    statusMessage = "検索中です";
+  } else if (isLoadingMore) {
+    statusMessage = "追加の書籍を読み込んでいます";
+  } else if (loadMoreError) {
+    statusMessage = loadMoreError;
+  } else if (isEmpty) {
+    statusMessage = "該当する書籍が見つかりませんでした";
+  } else if (hasResults) {
+    statusMessage = `${books.length}件の検索結果を表示しました`;
+  }
+
   return (
     <>
       <div className={styles.searchPanel}>
         <div className={styles.searchFormArea}>
           <BookSearchForm onSearch={handleSearch} defaultSearchWord={defaultSearchWord} />
           {error && (
-            <div className={stylesFeedback.error}>
+            <div className={stylesFeedback.error} role="alert">
               <ErrorIcon className={stylesFeedback.errorIcon} />
               <p className={stylesFeedback.errorText}>{error}</p>
             </div>
           )}
         </div>
-        <div className={styles.searchResultArea} aria-live="polite" aria-atomic="true">
-          {isInitial && (
-            <div className={styles.resultStatus}>
-              <SearchIcon className={styles.resultStatusIcon} />
-              <p className={styles.resultStatusText}>タイトルを入力して本を探してみましょう。</p>
-            </div>
-          )}
-          {isLoading && (
-            <div className={styles.resultStatus}>
-              <LoadingIcon className={styles.resultStatusIcon} />
-              <p className={styles.resultStatusText}>検索中...</p>
-            </div>
-          )}
-          {isEmpty && (
-            <div className={styles.resultStatus}>
-              <BookOpenIcon className={styles.resultStatusIcon} />
-              <p className={styles.resultStatusText}>該当する書籍が見つかりませんでした。</p>
-            </div>
-          )}
-
-          {hasResults && (
-            <BookSearchResults
-              books={books}
-              searchWord={submittedSearchWord}
-              onNavigateToDetail={saveSearchSnapshot}
-            />
-          )}
+        <div>
+          <div>
+            {isInitial && (
+              <div className={styles.resultStatus}>
+                <SearchIcon className={styles.resultStatusIcon} />
+                <p className={styles.resultStatusText}>タイトルを入力して本を探してみましょう。</p>
+              </div>
+            )}
+            {isLoading && (
+              <div className={styles.resultStatus}>
+                <LoadingIcon className={styles.resultStatusIcon} />
+                <p className={styles.resultStatusText}>検索中...</p>
+              </div>
+            )}
+            {isEmpty && (
+              <div className={styles.resultStatus}>
+                <BookOpenIcon className={styles.resultStatusIcon} />
+                <p className={styles.resultStatusText}>該当する書籍が見つかりませんでした。</p>
+              </div>
+            )}
+          </div>
+          <div>
+            {hasResults && (
+              <>
+                <BookSearchResults
+                  books={books}
+                  searchWord={submittedSearchWord}
+                  onNavigateToDetail={saveSearchSnapshot}
+                />
+              </>
+            )}
+            <p className={styles.screenReader} role="status">
+              {statusMessage}
+            </p>
+          </div>
         </div>
         {hasMore && (
           <div className={styles.loadMoreArea}>
