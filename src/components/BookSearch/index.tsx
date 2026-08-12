@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Book } from "@/types/book";
 import type { SearchSnapshot } from "@/types/searchSnapshot";
-import { SearchSnapshotSchema } from "@/schemas/searchSnapshot";
+import {} from "@/schemas/searchSnapshot";
 import { searchBooks } from "@/lib/googleBooksApi";
 import BookSearchForm from "@/components/BookSearch/BookSearchForm";
 import BookSearchResults from "@/components/BookSearch/BookSearchResults";
@@ -13,9 +13,7 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
-
-const SEARCH_SNAPSHOT_KEY = "bookSearchSnapshot"; // ブラウザバック時の処理のためにsessionStorageへ保存するキー
-const SEARCH_SNAPSHOT_TTL_MS = 10 * 60 * 1000;
+import { getSearchSnapshot, saveSearchSnapshot, clearSearchSnapshot } from "@/lib/searchSnapshot";
 
 export default function BookSearch() {
   // 状態管理
@@ -60,7 +58,7 @@ export default function BookSearch() {
       setIsLoadingMore(false);
       setLoadMoreError(null);
 
-      sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
+      clearSearchSnapshot();
 
       return;
     }
@@ -147,10 +145,7 @@ export default function BookSearch() {
     }
   };
 
-  /**
-   * 検索状態を保存（ブラウザバック対策）
-   */
-  const saveSearchSnapshot = () => {
+  const handleNavigateToDetail = () => {
     const snapshot: SearchSnapshot = {
       query: submittedSearchWord,
       books,
@@ -160,44 +155,7 @@ export default function BookSearch() {
       savedAt: Date.now(),
     };
 
-    sessionStorage.setItem(SEARCH_SNAPSHOT_KEY, JSON.stringify(snapshot)); //文字列（JSON）に変換してから保存する
-  };
-
-  /**
-   * sessionStorageを読んで保存したsnapshotを返す
-   */
-  const getSearchSnapshot = (query: string): SearchSnapshot | undefined => {
-    const storedSnapshot = sessionStorage.getItem(SEARCH_SNAPSHOT_KEY); // sessionStorageに保存したキーから検索内容を復元
-
-    if (!storedSnapshot) return;
-
-    try {
-      const snapshot = JSON.parse(storedSnapshot); //JSONをオブジェクトに戻す
-      const parsedSnapshot = SearchSnapshotSchema.safeParse(snapshot);
-      if (!parsedSnapshot.success) {
-        console.error("Snapshot response validation failed", parsedSnapshot.error);
-        sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
-        return;
-      }
-      const result = parsedSnapshot.data;
-
-      const isExpired = Date.now() - result.savedAt >= SEARCH_SNAPSHOT_TTL_MS; //　セッションの有効期限チェック
-      if (isExpired) {
-        sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
-        return;
-      }
-
-      if (result.query !== query) {
-        sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY); //保存したqueryとURLクエリパラメータが同じか確認
-        return;
-      }
-
-      return result;
-    } catch (error) {
-      console.error(error);
-      sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
-      return;
-    }
+    saveSearchSnapshot(snapshot);
   };
 
   /**
@@ -304,7 +262,7 @@ export default function BookSearch() {
                 <BookSearchResults
                   books={books}
                   searchWord={submittedSearchWord}
-                  onNavigateToDetail={saveSearchSnapshot}
+                  onNavigateToDetail={handleNavigateToDetail}
                 />
               </>
             )}
