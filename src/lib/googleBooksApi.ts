@@ -1,4 +1,5 @@
-import type { GoogleBooksItem, Book, BookDetail } from "@/types/book";
+import type { GoogleBooksItem, GoogleBooksSearchResponse, Book, BookDetail } from "@/types/book";
+import { GoogleBooksSearchResponseSchema, GoogleBooksItemSchema } from "@/schemas/books";
 
 // 環境変数チェック
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
@@ -7,7 +8,8 @@ if (!apiKey) {
 }
 
 /**
- * Google Books APIで書籍を検索し、アプリ用のBook配列に変換して返す
+ * Google Books APIで書籍を検索し、Book配列に変換して返す
+ * items[]とその中身でZod検証を分けている
  */
 export const searchBooks = async (searchWord: string, startIndex = 0): Promise<Book[]> => {
   // URL生成
@@ -20,25 +22,40 @@ export const searchBooks = async (searchWord: string, startIndex = 0): Promise<B
   });
   const url = `https://www.googleapis.com/books/v1/volumes?${params.toString()}`;
 
-  // fetchしてjson受け取る
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`searchBooks fetch error: ${response.status}`);
   }
   const json = await response.json();
 
-  // 生データのnullチェック
-  const items: GoogleBooksItem[] = json.items ?? [];
+  // Zodでデータ検証（items[]のみ）
+  const result = GoogleBooksSearchResponseSchema.safeParse(json);
+  if (!result.success) {
+    console.error("Google Books API response validation failed", result.error);
+    throw new Error("Invalid Google Books API response");
+  }
+
+  const items = result.data.items ?? [];
+  const validItems: GoogleBooksItem[] = [];
+  // Zodでデータ検証（items[]の中身）
+  for (const item of items) {
+    const result = GoogleBooksItemSchema.safeParse(item);
+    if (!result.success) {
+      console.error("Invalid book item", result.error);
+      continue;
+    }
+    validItems.push(result.data);
+  }
 
   // 表示用に加工
-  const books: Book[] = items.map((item) => {
-    const thumbnail = item.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://");
+  const books: Book[] = validItems.map((item) => {
+    const thumbnail = item.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://");
 
     return {
       id: item.id,
-      title: item.volumeInfo?.title ?? "タイトル不明",
-      authors: item.volumeInfo?.authors ?? ["著者不明"],
-      publishedDate: item.volumeInfo?.publishedDate ?? "出版日不明",
+      title: item.volumeInfo.title ?? "タイトル不明",
+      authors: item.volumeInfo.authors ?? ["著者不明"],
+      publishedDate: item.volumeInfo.publishedDate ?? "出版日不明",
       thumbnail,
     };
   });
@@ -47,7 +64,7 @@ export const searchBooks = async (searchWord: string, startIndex = 0): Promise<B
 };
 
 /**
- * Google Books APIのIDによって詳細情報を取得する
+ * Google Books APIのIDによって詳細情報を取得
  */
 export const getBookDetail = async (id: string): Promise<BookDetail> => {
   const params = new URLSearchParams({
@@ -63,8 +80,13 @@ export const getBookDetail = async (id: string): Promise<BookDetail> => {
   }
   const json = await response.json();
 
-  // 生データのnullチェック
-  const item: GoogleBooksItem = json;
+  // Zodでデータ検証
+  const result = GoogleBooksItemSchema.safeParse(json);
+  if (!result.success) {
+    console.error("Google Books API response validation failed", result.error);
+    throw new Error("Invalid book item");
+  }
+  const item: GoogleBooksItem = result.data;
 
   // HTMLタグの処理（brは\n、）
   const stripHtml = (html: string) => {
@@ -75,17 +97,17 @@ export const getBookDetail = async (id: string): Promise<BookDetail> => {
   };
 
   // 表示用に加工
-  const thumbnail = item.volumeInfo?.imageLinks?.thumbnail?.replace("http://", "https://");
+  const thumbnail = item.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://");
   return {
     id: item.id,
-    title: item.volumeInfo?.title ?? "タイトル不明",
-    authors: item.volumeInfo?.authors ?? ["著者不明"],
-    publisher: item.volumeInfo?.publisher ?? "出版社不明",
-    publishedDate: item.volumeInfo?.publishedDate ?? "出版日不明",
+    title: item.volumeInfo.title ?? "タイトル不明",
+    authors: item.volumeInfo.authors ?? ["著者不明"],
+    publisher: item.volumeInfo.publisher ?? "出版社不明",
+    publishedDate: item.volumeInfo.publishedDate ?? "出版日不明",
     // descriptionのみHTMLが入っているので別で処理
-    description: item.volumeInfo?.description ? stripHtml(item.volumeInfo.description) : "詳細不明",
-    pageCount: item.volumeInfo?.pageCount,
+    description: item.volumeInfo.description ? stripHtml(item.volumeInfo.description) : "詳細不明",
+    pageCount: item.volumeInfo.pageCount,
     thumbnail,
-    previewLink: item.volumeInfo?.previewLink,
+    previewLink: item.volumeInfo.previewLink,
   };
 };

@@ -1,36 +1,25 @@
-export type GoogleBooksItem = {
-  id: string;
-  volumeInfo?: {
-    title?: string;
-    authors?: string[];
-    publisher?: string;
-    publishedDate?: string;
-    imageLinks?: {
-      thumbnail?: string;
-    };
-    description?: string;
-    pageCount?: number;
-    thumbnail?: string;
-    previewLink?: string;
-  };
-};
+import { z } from "zod";
 
-export type Book = {
-  id: string;
-  title: string;
-  authors: string[];
-  publishedDate?: string;
-  thumbnail?: string;
-};
+import {
+  GoogleBooksItemSchema,
+  GoogleBooksSearchResponseSchema,
+  BookSchema,
+} from "@/schemas/books";
+
+export type GoogleBooksItem = z.infer<typeof GoogleBooksItemSchema>;
+
+export type GoogleBooksSearchResponse = z.infer<typeof GoogleBooksSearchResponseSchema>;
+
+export type Book = z.infer<typeof BookSchema>;
 
 export type BookDetail = {
   id: string;
   title: string;
   authors: string[];
-  publisher?: string;
-  publishedDate?: string;
-  description?: string;
-  pageCount?: number | string;
+  publisher: string;
+  publishedDate: string;
+  description: string;
+  pageCount?: number;
   thumbnail?: string;
   previewLink?: string;
 };
