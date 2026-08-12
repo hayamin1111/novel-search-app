@@ -1,4 +1,4 @@
-import type { GoogleBooksItem, GoogleBooksSearchResponse, Book, BookDetail } from "@/types/book";
+import type { GoogleBooksItem, Book, BookDetail } from "@/types/book";
 import { GoogleBooksSearchResponseSchema, GoogleBooksItemSchema } from "@/schemas/books";
 
 // 環境変数チェック
@@ -29,22 +29,22 @@ export const searchBooks = async (searchWord: string, startIndex = 0): Promise<B
   const json = await response.json();
 
   // Zodでデータ検証（items[]のみ）
-  const result = GoogleBooksSearchResponseSchema.safeParse(json);
-  if (!result.success) {
-    console.error("Google Books API response validation failed", result.error);
+  const parsedResponse = GoogleBooksSearchResponseSchema.safeParse(json);
+  if (!parsedResponse.success) {
+    console.error("Google Books API response validation failed", parsedResponse.error);
     throw new Error("Invalid Google Books API response");
   }
 
-  const items = result.data.items ?? [];
+  const items = parsedResponse.data.items ?? [];
   const validItems: GoogleBooksItem[] = [];
   // Zodでデータ検証（items[]の中身）
   for (const item of items) {
-    const result = GoogleBooksItemSchema.safeParse(item);
-    if (!result.success) {
-      console.error("Invalid book item", result.error);
+    const parsedItem = GoogleBooksItemSchema.safeParse(item);
+    if (!parsedItem.success) {
+      console.error("Invalid book item", parsedItem.error);
       continue;
     }
-    validItems.push(result.data);
+    validItems.push(parsedItem.data);
   }
 
   // 表示用に加工

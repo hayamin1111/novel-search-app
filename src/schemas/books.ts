@@ -19,7 +19,7 @@ export const GoogleBooksItemSchema = z.object({
   }),
 });
 
-// Google Books API レスポンス（itemsのみ）の検証
+// Google Books API レスポンス（items[]のみ）の検証
 export const GoogleBooksSearchResponseSchema = z.object({
   items: z.array(z.unknown()).optional(),
 });

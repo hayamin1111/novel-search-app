@@ -1,10 +1,5 @@
-import type { Book } from "@/types/book";
+import { z } from "zod";
 
-export type SearchSnapshot = {
-  query: string;
-  books: Book[];
-  nextStartIndex: number;
-  hasMore: boolean;
-  scrollY: number;
-  savedAt: number;
-};
+import { SearchSnapshotSchema } from "@/schemas/searchSnapshot";
+
+export type SearchSnapshot = z.infer<typeof SearchSnapshotSchema>;

@@ -1,14 +1,8 @@
 import { z } from "zod";
 
-import {
-  GoogleBooksItemSchema,
-  GoogleBooksSearchResponseSchema,
-  BookSchema,
-} from "@/schemas/books";
+import { GoogleBooksItemSchema, BookSchema } from "@/schemas/books";
 
 export type GoogleBooksItem = z.infer<typeof GoogleBooksItemSchema>;
-
-export type GoogleBooksSearchResponse = z.infer<typeof GoogleBooksSearchResponseSchema>;
 
 export type Book = z.infer<typeof BookSchema>;
 

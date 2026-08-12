@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Book } from "@/types/book";
 import type { SearchSnapshot } from "@/types/searchSnapshot";
+import { SearchSnapshotSchema } from "@/schemas/searchSnapshot";
 import { searchBooks } from "@/lib/googleBooksApi";
 import BookSearchForm from "@/components/BookSearch/BookSearchForm";
 import BookSearchResults from "@/components/BookSearch/BookSearchResults";
@@ -92,6 +93,7 @@ export default function BookSearch() {
       setBooks(books);
       setHasSearched(true);
       setNextStartIndex(10);
+      // TODO: Zodで不正な書籍を除外するとbooks.lengthが10未満になるため、hasMoreの判定方法は後で改善する
       setHasMore(books.length === 10);
     } catch (error) {
       setBooks([]);
@@ -170,28 +172,27 @@ export default function BookSearch() {
     if (!storedSnapshot) return;
 
     try {
-      const snapshot: SearchSnapshot = JSON.parse(storedSnapshot); //JSONをオブジェクトに戻す
-      // ⭐️後でZod追加
-
-      const isValidSavedAt =
-        typeof snapshot.savedAt === "number" && Number.isFinite(snapshot.savedAt); //数値型か、有限かチェック
-      if (!isValidSavedAt) {
+      const snapshot = JSON.parse(storedSnapshot); //JSONをオブジェクトに戻す
+      const parsedSnapshot = SearchSnapshotSchema.safeParse(snapshot);
+      if (!parsedSnapshot.success) {
+        console.error("Snapshot response validation failed", parsedSnapshot.error);
         sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
         return;
       }
+      const result = parsedSnapshot.data;
 
-      const isExpired = Date.now() - snapshot.savedAt >= SEARCH_SNAPSHOT_TTL_MS; //　セッションの有効期限チェック
+      const isExpired = Date.now() - result.savedAt >= SEARCH_SNAPSHOT_TTL_MS; //　セッションの有効期限チェック
       if (isExpired) {
         sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
         return;
       }
 
-      if (snapshot.query !== query) {
+      if (result.query !== query) {
         sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY); //保存したqueryとURLクエリパラメータが同じか確認
         return;
       }
 
-      return snapshot;
+      return result;
     } catch (error) {
       console.error(error);
       sessionStorage.removeItem(SEARCH_SNAPSHOT_KEY);
