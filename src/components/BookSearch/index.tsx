@@ -1,10 +1,10 @@
 "use client";
 import styles from "./index.module.css";
 import feedbackStyles from "@/styles/feedback.module.css";
-import { useEffect, useLayoutEffect, useState, useRef } from "react";
+import { useEffect, useLayoutEffect, useReducer, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import type { Book } from "@/types/book";
 import type { SearchSnapshot } from "@/types/searchSnapshot";
+import { initialSearchState, searchReducer } from "@/components/BookSearch/searchReducer";
 import BookSearchForm from "@/components/BookSearch/BookSearchForm";
 import BookSearchResults from "@/components/BookSearch/BookSearchResults";
 import SearchIcon from "@/components/icons/SearchIcon";
@@ -13,19 +13,17 @@ import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
 import { getSearchSnapshot, saveSearchSnapshot, clearSearchSnapshot } from "@/lib/searchSnapshot";
 import { searchBooks } from "@/lib/googleBooksApi";
-import { mergeUniqueBooks } from "@/lib/books";
 
 export default function BookSearch() {
   // 状態管理
-  const [isLoading, setIsLoading] = useState(false); //検索中ローディング
-  const [hasSearched, setHasSearched] = useState(false); //未検索かどうか
-  const [error, setError] = useState<string | null>(null); //初回検索・検索全体のエラー
-  const [books, setBooks] = useState<Book[]>([]); //書籍情報
-  const [submittedSearchWord, setSubmittedSearchWord] = useState(""); //「さらに見る」用に検索ワードを保存
-  const [nextStartIndex, setNextStartIndex] = useState(0); //「さらに見る」用のパラメータ
-  const [hasMore, setHasMore] = useState(false); //「さらに見る」用
-  const [isLoadingMore, setIsLoadingMore] = useState(false); //「さらに見る」用ローディング
-  const [loadMoreError, setLoadMoreError] = useState<string | null>(null); //「さらに見る」の追加取得エラー
+  const [state, dispatch] = useReducer(searchReducer, initialSearchState);
+  const { books, submittedSearchWord, nextStartIndex, hasMore, searchRequest, loadMoreRequest } =
+    state;
+  //表示用booleanをstateから導出する
+  const isLoading = searchRequest.status === "loading";
+  const isLoadingMore = loadMoreRequest.status === "loading";
+  const error = searchRequest.status === "error" ? searchRequest.message : null;
+  const loadMoreError = loadMoreRequest.status === "error" ? loadMoreRequest.message : null;
 
   const restoreScrollYRef = useRef<number | null>(null);
 
@@ -48,15 +46,7 @@ export default function BookSearch() {
       const url = queryString ? `/?${queryString}` : window.location.pathname;
       window.history.replaceState(null, "", url);
 
-      // 状態の初期化
-      setBooks([]);
-      setHasSearched(false);
-      setError(null);
-      setSubmittedSearchWord("");
-      setIsLoadingMore(false);
-      setLoadMoreError(null);
-      setNextStartIndex(0);
-      setHasMore(false);
+      dispatch({ type: "RESET" });
 
       clearSearchSnapshot();
 
@@ -74,33 +64,25 @@ export default function BookSearch() {
    * 検索実行
    */
   const executeSearch = async (searchWord: string) => {
-    // 初期化
-    setIsLoading(true);
-    setBooks([]); //前回検索結果は削除
-    setError(null); //前回のエラー表示は削除
-    setLoadMoreError(null);
-    setNextStartIndex(0);
-    setHasMore(false);
-    setIsLoadingMore(false);
-    setLoadMoreError(null);
-    setSubmittedSearchWord(searchWord); //「さらに見る」用に検索ワードを保存
+    dispatch({
+      type: "SEARCH_STARTED",
+      submittedSearchWord: searchWord,
+    });
 
     try {
       // 文字列検索
       const books = await searchBooks(searchWord);
-      setBooks(books);
-      setHasSearched(true);
-      setNextStartIndex(10);
-      // TODO: Zodで不正な書籍を除外するとbooks.lengthが10未満になるため、hasMoreの判定方法は後で改善する
-      setHasMore(books.length === 10);
+      dispatch({
+        type: "SEARCH_SUCCEEDED",
+        books,
+        hasMore: books.length === 10, // TODO: Zodで不正な書籍を除外するとbooks.lengthが10未満になるため、hasMoreの判定方法は後で改善する
+      });
     } catch (error) {
-      setBooks([]);
-      setHasSearched(true);
       console.error(error);
-      setError("書籍情報の取得に失敗しました。時間をおいて再度お試しください。");
-      setHasMore(false);
-    } finally {
-      setIsLoading(false);
+      dispatch({
+        type: "SEARCH_FAILED",
+        message: "書籍情報の取得に失敗しました。時間をおいて再度お試しください。",
+      });
     }
   };
 
@@ -110,22 +92,24 @@ export default function BookSearch() {
   const handleSearchMore = async () => {
     if (submittedSearchWord === "" || !hasMore || isLoadingMore) return;
 
-    setIsLoadingMore(true);
-    setLoadMoreError(null);
+    dispatch({
+      type: "LOAD_MORE_STARTED",
+    });
 
     try {
-      const newBooks = await searchBooks(submittedSearchWord, nextStartIndex); //startIndexパラメータを追加して再検索
+      const incomingBooks = await searchBooks(submittedSearchWord, nextStartIndex); //startIndexパラメータを追加して再検索
 
-      setBooks((prevBooks) => mergeUniqueBooks(prevBooks, newBooks)); //書籍の重複除外
-
-      setNextStartIndex((prev) => prev + 10); // 次回の追加取得開始位置を10件分進める
-      setHasMore(newBooks.length === 10);
-      setHasSearched(true);
+      dispatch({
+        type: "LOAD_MORE_SUCCEEDED",
+        books: incomingBooks,
+        hasMore: incomingBooks.length === 10, // TODO: Zodで不正な書籍を除外するとbooks.lengthが10未満になるため、hasMoreの判定方法は後で改善する
+      });
     } catch (error) {
       console.error(error);
-      setLoadMoreError("追加の書籍情報の取得に失敗しました。時間をおいて再度お試しください。");
-    } finally {
-      setIsLoadingMore(false);
+      dispatch({
+        type: "LOAD_MORE_FAILED",
+        message: "書籍情報の取得に失敗しました。時間をおいて再度お試しください。",
+      });
     }
   };
 
@@ -146,17 +130,6 @@ export default function BookSearch() {
   };
 
   /**
-   * sessionStorageに保存したデータを復元してステートに渡す
-   */
-  const restoreSnapshot = (snapshot: SearchSnapshot) => {
-    setBooks(snapshot.books);
-    setSubmittedSearchWord(snapshot.query);
-    setNextStartIndex(snapshot.nextStartIndex);
-    setHasMore(snapshot.hasMore);
-    setHasSearched(true);
-  };
-
-  /**
    * 初回の初期化処理
    */
   useEffect(() => {
@@ -171,9 +144,10 @@ export default function BookSearch() {
     if (snapshot) {
       restoreScrollYRef.current = snapshot.scrollY; //ブラウザバックでスクロール位置を復元
 
-      // sessionStorageはブラウザでのみ取得できるため、初回マウント時に一度だけstateへ復元する
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      restoreSnapshot(snapshot);
+      dispatch({
+        type: "SNAPSHOT_RESTORED",
+        snapshot,
+      });
       return;
     }
 
@@ -193,10 +167,11 @@ export default function BookSearch() {
     restoreScrollYRef.current = null; //スクロール復元は一度だけ実行のためnullに戻す
   }, [books.length]);
 
-  const isInitial = !isLoading && !hasSearched && !error;
-  const isEmpty = !isLoading && hasSearched && books.length === 0 && !error;
-  const hasResults = books.length > 0;
+  const isInitial = searchRequest.status === "idle";
+  const isEmpty = searchRequest.status === "success" && books.length === 0;
+  const hasResults = searchRequest.status === "success" && books.length > 0;
 
+  // 読み上げ用
   let statusMessage = "";
   if (isLoading) {
     statusMessage = "検索中です";

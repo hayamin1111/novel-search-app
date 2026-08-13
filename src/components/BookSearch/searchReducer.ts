@@ -1,16 +1,13 @@
-// import { useReducer } from "react";
 import type { Book } from "@/types/book";
 import type { SearchSnapshot } from "@/types/searchSnapshot";
 import { mergeUniqueBooks } from "@/lib/books";
 
-// isLoading. hasSearched, error を1つにまとめる
 type SearchRequest =
   | { status: "idle" }
   | { status: "loading" }
   | { status: "success" }
   | { status: "error"; message: string };
 
-// isLoadingMore, loadMoreError を1つにまとめる
 type LoadMoreRequest =
   | { status: "idle" }
   | { status: "loading" }
@@ -121,13 +118,3 @@ export const searchReducer = (state: SearchState, action: SearchAction): SearchS
       return state;
   }
 };
-
-// TODO: Zodで不正な書籍を除外するとbooks.lengthが10未満になるため、hasMoreの判定方法は後で改善する
-// dispatch({
-//   type: "SEARCH_STARTED",
-//   searchWord,
-// });
-// dispatch({
-//   type: "SEARCH_SUCCEEDED",
-//   searchWord,
-// });
