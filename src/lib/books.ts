@@ -1,5 +1,8 @@
 import type { Book } from "@/types/book";
 
+/**
+ * 書籍の重複除外（新しい配列を返す）
+ */
 export const mergeUniqueBooks = (existingBooks: Book[], incomingBooks: Book[]): Book[] => {
   const existingBookIds = new Set(existingBooks.map((book) => book.id));
 

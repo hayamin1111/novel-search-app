@@ -53,10 +53,10 @@ export default function BookSearch() {
       setHasSearched(false);
       setError(null);
       setSubmittedSearchWord("");
-      setNextStartIndex(0);
-      setHasMore(false);
       setIsLoadingMore(false);
       setLoadMoreError(null);
+      setNextStartIndex(0);
+      setHasMore(false);
 
       clearSearchSnapshot();
 
@@ -116,7 +116,7 @@ export default function BookSearch() {
     try {
       const newBooks = await searchBooks(submittedSearchWord, nextStartIndex); //startIndexパラメータを追加して再検索
 
-      setBooks((prevBooks) => mergeUniqueBooks(prevBooks, newBooks)); //書籍の重複防止
+      setBooks((prevBooks) => mergeUniqueBooks(prevBooks, newBooks)); //書籍の重複除外
 
       setNextStartIndex((prev) => prev + 10); // 次回の追加取得開始位置を10件分進める
       setHasMore(newBooks.length === 10);
@@ -129,6 +129,9 @@ export default function BookSearch() {
     }
   };
 
+  /**
+   * snapshotをsessionStorageに保存するハンドラ
+   */
   const handleNavigateToDetail = () => {
     const snapshot: SearchSnapshot = {
       query: submittedSearchWord,
