@@ -42,7 +42,7 @@ export const getSearchSnapshot = (query: string): SearchSnapshot | undefined => 
 };
 
 /**
- * snapsotをsessionStorageに保存
+ * snapshotをsessionStorageに保存
  */
 export const saveSearchSnapshot = (snapshot: SearchSnapshot) => {
   sessionStorage.setItem(SEARCH_SNAPSHOT_KEY, JSON.stringify(snapshot)); //文字列（JSON）に変換してから保存する

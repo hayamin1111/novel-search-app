@@ -5,8 +5,6 @@ import { useEffect, useLayoutEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Book } from "@/types/book";
 import type { SearchSnapshot } from "@/types/searchSnapshot";
-import {} from "@/schemas/searchSnapshot";
-import { searchBooks } from "@/lib/googleBooksApi";
 import BookSearchForm from "@/components/BookSearch/BookSearchForm";
 import BookSearchResults from "@/components/BookSearch/BookSearchResults";
 import SearchIcon from "@/components/icons/SearchIcon";
@@ -14,6 +12,8 @@ import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
 import { getSearchSnapshot, saveSearchSnapshot, clearSearchSnapshot } from "@/lib/searchSnapshot";
+import { searchBooks } from "@/lib/googleBooksApi";
+import { mergeUniqueBooks } from "@/lib/books";
 
 export default function BookSearch() {
   // 状態管理
@@ -113,26 +113,10 @@ export default function BookSearch() {
     setIsLoadingMore(true);
     setLoadMoreError(null);
 
-    let newBooks: Book[] = [];
-
     try {
-      newBooks = await searchBooks(submittedSearchWord, nextStartIndex); //startIndexパラメータを追加して再検索
+      const newBooks = await searchBooks(submittedSearchWord, nextStartIndex); //startIndexパラメータを追加して再検索
 
-      //書籍の重複防止
-      setBooks((prevBooks) => {
-        const existingBookIds = new Set(prevBooks.map((book) => book.id));
-
-        const uniqueBooks = newBooks.filter((book) => {
-          if (existingBookIds.has(book.id)) {
-            return false;
-          }
-
-          existingBookIds.add(book.id);
-          return true;
-        });
-
-        return [...prevBooks, ...uniqueBooks]; //既存結果の末尾に追加
-      });
+      setBooks((prevBooks) => mergeUniqueBooks(prevBooks, newBooks)); //書籍の重複防止
 
       setNextStartIndex((prev) => prev + 10); // 次回の追加取得開始位置を10件分進める
       setHasMore(newBooks.length === 10);
