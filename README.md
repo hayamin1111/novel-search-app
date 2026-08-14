@@ -36,16 +36,16 @@ React・Next.jsのキャッチアップに加え、実務で培った設計・�
 
 ## 技術スタック
 
-| 分類       | 技術                          |
-| ---------- | ----------------------------- |
-| Framework  | Next.js 16（App Router）      |
-| UI         | React 19                      |
-| Language   | TypeScript                    |
-| Styling    | CSS Modules                   |
-| Validation | Zod                           |
-| API        | Google Books API              |
-| Quality    | ESLint / Prettier / Stylelint |
-| Hosting    | Vercel                        |
+| 分類       | 技術                             |
+| ---------- | -------------------------------- |
+| Framework  | Next.js 16（App Router）         |
+| UI         | React 19                         |
+| Language   | TypeScript                       |
+| Styling    | CSS Modules                      |
+| Validation | Zod                              |
+| API        | Google Books API / Route Handler |
+| Quality    | ESLint / Prettier / Stylelint    |
+| Hosting    | Vercel                           |
 
 ## 設計・実装のポイント
 
@@ -56,20 +56,20 @@ Google Books APIのレスポンスは、Zodで実行時検証してからアプ�
 検索レスポンスでは各itemを個別に検証し、不正なitemだけを除外します。1件の不正データで検索結果全体が失敗しない設計です。
 
 ```text
-Google Books API response
+Client Component
+        ↓
+Route Handler
+        ↓
+Google Books API
         ↓
 Zodによる実行時検証
-        ↓
-GoogleBooksItem
         ↓
 Mapperによる変換
         ↓
 Book / BookDetail
-        ↓
-UI
 ```
 
-`googleBooksApi.ts`はAPI通信・HTTPエラー・Zod検証を担当し、`googleBooksMapper.ts`は検証済みデータから表示用データへの変換を担当します。外部API固有の構造をUIへ直接漏らさないようにしています。
+Client Componentは`booksApiClient.ts`を通じてアプリ内のRoute Handlerを呼び出します。Route HandlerがGoogle Books APIとの通信・HTTPエラー・Zod検証を担当し、`googleBooksMapper.ts`が検証済みデータを表示用データへ変換します。APIキーと外部API固有の構造をUIへ直接漏らさない構成です。
 
 ### useReducerによる検索状態の管理
 
@@ -122,13 +122,14 @@ type SearchSnapshot = {
 
 コンポーネントの責務を小さくし、後から単体テストしやすい構成を意識しています。
 
-| ファイル               | 責務                                |
-| ---------------------- | ----------------------------------- |
-| `googleBooksApi.ts`    | API通信、HTTPエラー、Zod検証        |
-| `googleBooksMapper.ts` | APIデータからアプリ内データへの変換 |
-| `searchSnapshot.ts`    | sessionStorageへの保存・検証・復元  |
-| `books.ts`             | 書籍IDによる重複除外                |
-| `searchReducer.ts`     | 検索状態の遷移                      |
+| ファイル                    | 責務                                |
+| --------------------------- | ----------------------------------- |
+| `app/api/books/**/route.ts` | API通信、HTTPエラー、Zod検証        |
+| `booksApiClient.ts`         | Clientからアプリ内APIへの通信       |
+| `googleBooksMapper.ts`      | APIデータからアプリ内データへの変換 |
+| `searchSnapshot.ts`         | sessionStorageへの保存・検証・復元  |
+| `books.ts`                  | 書籍IDによる重複除外                |
+| `searchReducer.ts`          | 検索状態の遷移                      |
 
 `mergeUniqueBooks()`やMapperはReact・ブラウザAPIに依存しない純粋関数として切り出しています。
 
@@ -151,6 +152,10 @@ WCAG 2.2のレベルA〜AAを参考に、主に次の対応を行っています
 ```text
 src
 ├── app
+│   ├── api
+│   │   └── books
+│   │       ├── [id]/route.ts
+│   │       └── route.ts
 │   ├── books/[id]/page.tsx
 │   ├── error.tsx
 │   ├── not-found.tsx
@@ -167,7 +172,7 @@ src
 │   └── icons
 ├── lib
 │   ├── books.ts
-│   ├── googleBooksApi.ts
+│   ├── booksApiClient.ts
 │   ├── googleBooksMapper.ts
 │   └── searchSnapshot.ts
 ├── schemas
@@ -201,7 +206,7 @@ npm install
 GOOGLE_BOOKS_API_KEY=your_api_key
 ```
 
-Google Cloud ConsoleでBooks APIを有効にし、APIキーにAPI・HTTPリファラー制限を設定してください。
+Google Cloud ConsoleでBooks APIを有効にし、APIキーの「APIの制限」をBooks APIだけに設定してください。キーはサーバー側の環境変数で管理し、`.env.local`をGitへ追加しないよう注意ください。
 
 ### 4. 開発サーバーを起動
 
@@ -226,9 +231,8 @@ npm run dev
 
 ## 今後の改善
 
-- Route Handler経由でGoogle Books APIへアクセスし、APIキーをサーバー側へ移動
 - 詳細ページの動的metadata
 - Vitest / React Testing Libraryによるテスト
 - GitHub Actionsによるlint・test・buildの自動実行
 - APIレスポンスの取得件数を基準にした追加取得終了判定の改善
-- キャッシュ・レート制限の検討
+- Route Handlerのキャッシュ・rate limitの検討
