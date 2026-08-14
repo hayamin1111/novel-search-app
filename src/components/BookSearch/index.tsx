@@ -33,7 +33,7 @@ export default function BookSearch() {
   /**
    * 通常の検索
    */
-  const handleSearch = async (searchWord: string) => {
+  const handleSearch = (searchWord: string) => {
     // 検索ワードをクエリパラメータとして設定
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set("q", searchWord);
@@ -108,7 +108,7 @@ export default function BookSearch() {
       console.error(error);
       dispatch({
         type: "LOAD_MORE_FAILED",
-        message: "書籍情報の取得に失敗しました。時間をおいて再度お試しください。",
+        message: "追加の書籍情報の取得に失敗しました。時間をおいて再度お試しください。",
       });
     }
   };

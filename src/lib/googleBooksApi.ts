@@ -1,5 +1,7 @@
+//fetch、HTTPエラー、Zod検証、処理全体の制御
 import type { GoogleBooksItem, Book, BookDetail } from "@/types/book";
 import { GoogleBooksSearchResponseSchema, GoogleBooksItemSchema } from "@/schemas/books";
+import { mapGoogleBooksItemToBook, mapGoogleBooksItemToBookDetail } from "@/lib/googleBooksMapper";
 
 // 環境変数チェック
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
@@ -48,17 +50,7 @@ export const searchBooks = async (searchWord: string, startIndex = 0): Promise<B
   }
 
   // 表示用に加工
-  const books: Book[] = validItems.map((item) => {
-    const thumbnail = item.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://");
-
-    return {
-      id: item.id,
-      title: item.volumeInfo.title ?? "タイトル不明",
-      authors: item.volumeInfo.authors ?? ["著者不明"],
-      publishedDate: item.volumeInfo.publishedDate ?? "出版日不明",
-      thumbnail,
-    };
-  });
+  const books: Book[] = validItems.map(mapGoogleBooksItemToBook);
 
   return books;
 };
@@ -86,28 +78,9 @@ export const getBookDetail = async (id: string): Promise<BookDetail> => {
     console.error("Google Books API response validation failed", result.error);
     throw new Error("Invalid book item");
   }
-  const item: GoogleBooksItem = result.data;
-
-  // HTMLタグの処理（brは\n、）
-  const stripHtml = (html: string) => {
-    return html
-      .replace(/<br\s*\/?>/gi, "\n")
-      .replace(/<wbr\s*\/?>/gi, "")
-      .replace(/<[^>]*>/g, "");
-  };
 
   // 表示用に加工
-  const thumbnail = item.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://");
-  return {
-    id: item.id,
-    title: item.volumeInfo.title ?? "タイトル不明",
-    authors: item.volumeInfo.authors ?? ["著者不明"],
-    publisher: item.volumeInfo.publisher ?? "出版社不明",
-    publishedDate: item.volumeInfo.publishedDate ?? "出版日不明",
-    // descriptionのみHTMLが入っているので別で処理
-    description: item.volumeInfo.description ? stripHtml(item.volumeInfo.description) : "詳細不明",
-    pageCount: item.volumeInfo.pageCount,
-    thumbnail,
-    previewLink: item.volumeInfo.previewLink,
-  };
+  const bookDetail = mapGoogleBooksItemToBookDetail(result.data);
+
+  return bookDetail;
 };
