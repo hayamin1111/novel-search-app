@@ -1,268 +1,234 @@
 # Book Finder
 
-Google Books APIを利用して、書籍タイトルから本を検索できるWebアプリケーションです。
+Google Books APIを利用した書籍検索アプリです。  
+タイトル検索、追加読み込み、書籍詳細の閲覧に加え、詳細ページから戻った際の検索結果・スクロール位置の復元に対応しています。
 
-検索結果の一覧表示、追加読み込み、書籍詳細の閲覧に対応しています。
+設計面では、外部APIデータの実行時検証、検索状態の明示的な状態遷移、URLとsessionStorageを組み合わせた検索状態の復元を実装しています。
 
-## デモ
-
-- 公開URL：デプロイ後に追加
+- [デモ](https://bookfinder.ehykw.com/)
 - [リポジトリ](https://github.com/hayamin1111/novel-search-app)
+
+## 制作背景
+
+React・Next.jsのキャッチアップに加え、実務で培った設計・実装の考え方を、公開可能な個人制作として示すことを目的に制作しました。
+外部データの境界、状態遷移、責務分離、アクセシビリティを意識し、「なぜこの設計にしたか」を説明できる実装を目指しています。
 
 ## スクリーンショット
 
-### 検索結果画面
-
-![Book Finderのトップページ](./public/screenshot-top.png)
-
-### 書籍詳細画面
-
-![Book Finderの詳細ページ](./public/screenshot-detail.png)
+| 検索結果                                                  | 書籍詳細                                                     |
+| --------------------------------------------------------- | ------------------------------------------------------------ |
+| ![Book Finderの検索結果画面](./public/screenshot-top.png) | ![Book Finderの書籍詳細画面](./public/screenshot-detail.png) |
 
 ## 主な機能
 
 - 書籍タイトルによる検索
-- 検索結果を10件ずつ表示
-- 「さらに見る」ボタン押下で追加で書籍情報取得
-- 書籍詳細ページ
-- 表紙画像がない場合の代替表示
-- 初期状態、検索中、検索結果なし、エラー状態の表示
-- 初回検索と追加読み込みで異なるローディング表示
-- 書籍IDによる重複データの除外
+- 初回10件取得と「さらに見る」による追加取得
+- 書籍IDを使った重複除外
+- 書籍詳細ページ `/books/[id]`
+- Loading / Empty / Error状態の表示
+- 表紙画像がない場合の代替画像
+- Google Booksのdescriptionに含まれるHTMLタグの除去
+- URL queryと`sessionStorage`による検索状態の復元
+- 検索結果へ戻った際のスクロール位置の復元
 - レスポンシブ対応
-- キーボード操作やフォーカス表示などのアクセシビリティ対応
+- キーボード操作、フォーカス表示、状態通知などのアクセシビリティ対応
+- `error.tsx` / `not-found.tsx`によるエラー・404表示
 
 ## 技術スタック
 
-- Next.js
-- React
-- TypeScript
-- CSS Modules
-- Google Books API
-- ESLint
-- Prettier
-- Stylelint
-- Vercel
+| 分類       | 技術                          |
+| ---------- | ----------------------------- |
+| Framework  | Next.js 16（App Router）      |
+| UI         | React 19                      |
+| Language   | TypeScript                    |
+| Styling    | CSS Modules                   |
+| Validation | Zod                           |
+| API        | Google Books API              |
+| Quality    | ESLint / Prettier / Stylelint |
+| Hosting    | Vercel                        |
 
-## ページ
+## 設計・実装のポイント
 
-### 一覧ページ`/`
+### 外部APIのデータを検証してからUIへ渡す
 
-書籍の検索と検索結果一覧を表示します。
+Google Books APIのレスポンスは、Zodで実行時検証してからアプリ内の`Book` / `BookDetail`型へ変換しています。
 
-- タイトル検索
-- 検索状態の表示
-- 書籍カード一覧
-- 追加読み込み
+検索レスポンスでは各itemを個別に検証し、不正なitemだけを除外します。1件の不正データで検索結果全体が失敗しない設計です。
 
-### 詳細ページ`/books/[id]`
+```text
+Google Books API response
+        ↓
+Zodによる実行時検証
+        ↓
+GoogleBooksItem
+        ↓
+Mapperによる変換
+        ↓
+Book / BookDetail
+        ↓
+UI
+```
 
-選択した書籍の詳細を表示します。
+`googleBooksApi.ts`はAPI通信・HTTPエラー・Zod検証を担当し、`googleBooksMapper.ts`は検証済みデータから表示用データへの変換を担当します。外部API固有の構造をUIへ直接漏らさないようにしています。
 
-- タイトル
-- 著者
-- 出版社
-- 出版日
-- ページ数
-- 書籍説明
-- 表紙画像
-- Google Booksへの外部リンク
+### useReducerによる検索状態の管理
 
-## 実装上のポイント
+検索機能の追加に伴い、複数の`useState`と連続したsetterによる状態更新が複雑になったため、`useReducer`へ変更しました。
 
-### 外部APIのデータをUI用の型へ変換
+```text
+SEARCH_STARTED
+  ├─ SEARCH_SUCCEEDED
+  └─ SEARCH_FAILED
 
-Google Books APIのレスポンスを、そのままコンポーネントへ渡さず、一覧表示用と詳細表示用の型に変換しています。
-これにより、UI側が外部API固有のデータ構造へ強く依存しないようにしています。
+LOAD_MORE_STARTED
+  ├─ LOAD_MORE_SUCCEEDED
+  └─ LOAD_MORE_FAILED
+```
+
+「値をどう変更するか」ではなく「何が起きたか」をactionとして表現しています。検索状態は`idle` / `loading` / `success` / `error`で管理し、初期表示・検索中・0件・結果あり・エラーのUIをstatusから導出しています。
+
+### URLとsessionStorageの役割分担
+
+詳細ページから検索結果へ戻っても、検索状況を維持できるようにしています。
+
+- URL query：どの検索かを表す検索語
+- `sessionStorage`：その検索がどこまで進んでいたかを表す一時状態
+
+`SearchSnapshot`には次の値を保存します。
 
 ```ts
-type Book = {
-  id: string;
-  title: string;
-  authors: string[];
-  publishedDate: string;
-  thumbnail?: string;
+type SearchSnapshot = {
+  query: string;
+  books: Book[];
+  nextStartIndex: number;
+  hasMore: boolean;
+  scrollY: number;
+  savedAt: number;
 };
 ```
 
-### 重複データの除外
+復元時は次の条件を確認します。
 
-追加取得時に、すでに表示済みの書籍IDをSetで管理し、同じ書籍が一覧へ重複して追加されないようにしています。
+1. JSONとして読み取れること
+2. Zodのスキーマを満たすこと
+3. 保存から10分以内であること
+4. URL queryとsnapshotのqueryが一致すること
 
-### CSS Modulesによるスタイル管理
+利用できないsnapshotは削除し、URL queryを使って通常検索します。スクロール位置は描画に使うstateではないため`useRef`に保持し、書籍カードの描画後に一度だけ復元します。
 
-コンポーネント単位でCSS Modulesを使用しています。
-グローバルな色、余白、文字サイズ、角丸などは、globals.cssのCSSカスタムプロパティで管理しています。
+詳細ページの「検索結果に戻る」には`router.back()`ではなく、検索語を引き継いだ`Link`を使用しています。詳細ページへ直接アクセスした場合でも、アプリ外へ戻らず意図した検索画面へ移動させるためです。
 
-## レスポンシブ対応
+### 副作用と純粋処理の分離
 
-固定的なブレークポイントへの依存を減らすため、CSS Grid、`auto-fit`、`minmax()`、`clamp()`などのモダンCSSを活用しています。
-コンテンツが自然に折り返す構成を基本とし、メディアクエリはレイアウトの切り替えに必要な箇所だけに限定しています。
+コンポーネントの責務を小さくし、後から単体テストしやすい構成を意識しています。
 
-## アクセシビリティ
+| ファイル               | 責務                                |
+| ---------------------- | ----------------------------------- |
+| `googleBooksApi.ts`    | API通信、HTTPエラー、Zod検証        |
+| `googleBooksMapper.ts` | APIデータからアプリ内データへの変換 |
+| `searchSnapshot.ts`    | sessionStorageへの保存・検証・復元  |
+| `books.ts`             | 書籍IDによる重複除外                |
+| `searchReducer.ts`     | 検索状態の遷移                      |
 
-WCAG 2.2のレベルA〜AAの達成基準を参考にして実装しています。
+`mergeUniqueBooks()`やMapperはReact・ブラウザAPIに依存しない純粋関数として切り出しています。
 
-主な対応内容：
+### レスポンシブとアクセシビリティ
 
-- キーボードによる操作
-- focus-visibleによるフォーカス表示
-- フォーム要素へのアクセシブルネーム
-- アイコンだけのボタンへのaria-label
-- 装飾SVGへのaria-hidden="true"
-- 検索状態を通知するaria-live
-- 色のコントラスト
+CSS Gridの`auto-fit` / `minmax()`や`clamp()`を使い、固定的なブレークポイントへの依存を抑えています。最小幅360pxからデスクトップまで、検索フォームとカード一覧が自然に変化する構成です。
 
-書籍の表紙画像は、同じ領域に書籍タイトルがテキストで表示されているため、重複読み上げを避ける目的で空の`alt`を設定しています。
-アイコンなどの装飾画像にも`aria-hidden="true"`を設定し、画面理解に不要な読み上げを抑制しました。
+WCAG 2.2のレベルA〜AAを参考に、主に次の対応を行っています。
+
+- キーボード操作と`:focus-visible`によるフォーカス表示
+- フォームとアイコンボタンへのアクセシブルネーム
+- 装飾SVGの読み上げ除外
+- `role="status"`による検索・追加読み込み状態の通知
+- `role="alert"`によるエラー通知
+- リンクとボタンの役割の区別
+- 色のコントラストとタップ領域への配慮
+
+## ディレクトリ構成
 
 ```text
 src
 ├── app
-│   ├── books
-│   │   └── [id]
-│   │       └── page.tsx
-│   ├── globals.css
+│   ├── books/[id]/page.tsx
+│   ├── error.tsx
+│   ├── not-found.tsx
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components
 │   ├── BookDetail
-│   │   └── BookDetailContent
 │   ├── BookSearch
 │   │   ├── BookSearchForm
-│   │   └──  BookSearchResults
+│   │   ├── BookSearchResults
+│   │   └── searchReducer.ts
 │   ├── Footer
 │   ├── Header
 │   └── icons
 ├── lib
-│   └── googleBooksApi.ts
+│   ├── books.ts
+│   ├── googleBooksApi.ts
+│   ├── googleBooksMapper.ts
+│   └── searchSnapshot.ts
+├── schemas
+│   ├── books.ts
+│   └── searchSnapshot.ts
 └── types
-    └── book.ts
+    ├── book.ts
+    └── searchSnapshot.ts
 ```
 
-## Getting Started
+## セットアップ
 
 ### 1. リポジトリをクローン
 
 ```bash
-   git clone https://github.com/hayamin1111/novel-search-app.git
-   cd novel-search-app
+git clone https://github.com/hayamin1111/novel-search-app.git
+cd novel-search-app
 ```
 
 ### 2. パッケージをインストール
 
 ```bash
-   npm install
+npm install
 ```
 
 ### 3. 環境変数を設定
 
-プロジェクトルートに.env.localを作成します。
+プロジェクトルートに`.env.local`を作成します。
 
 ```bash
 NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY=your_api_key
 ```
 
-Google Cloud Consoleで、APIキーに以下の制限を設定してください。
-
-APIの制限：Books API
-アプリケーションの制限：HTTPリファラー
-ローカル開発用：http://localhost:3000/\*
-
-.env.localはGitの管理対象に含めないでください。
+Google Cloud ConsoleでBooks APIを有効にし、APIキーにAPI・HTTPリファラー制限を設定してください。
 
 ### 4. 開発サーバーを起動
 
 ```bash
-   npm run dev
+npm run dev
 ```
 
-ブラウザで以下へアクセスします。
-
-http://localhost:3000
+[http://localhost:3000](http://localhost:3000)へアクセスします。
 
 ## コマンド
 
-```bash
-# 開発サーバー
+| コマンド               | 内容                |
+| ---------------------- | ------------------- |
+| `npm run dev`          | 開発サーバーを起動  |
+| `npm run build`        | 本番ビルド          |
+| `npm run start`        | 本番サーバーを起動  |
+| `npm run lint`         | ESLintを実行        |
+| `npm run lint:css`     | Stylelintを実行     |
+| `npm run lint:css:fix` | Stylelintで自動修正 |
+| `npm run format`       | Prettierで整形      |
+| `npm run format:check` | Prettierの差分確認  |
 
-npm run dev
+## 今後の改善
 
-# ESLint
-
-npm run lint
-
-# Stylelint
-
-npm run lint:css
-
-# Stylelintによる自動修正
-
-npm run lint:css:fix
-
-# 本番ビルド
-
-npm run build
-
-# 本番サーバー
-
-npm run start
-```
-
-## 学びと設計判断
-
-### App Routerによる一覧ページと詳細ページの分離
-
-Next.jsのApp Routerを使用し、検索一覧を`/`、書籍詳細を`/books/[id]`として分離しました。
-動的ルートを使った詳細ページの実装を経験するとともに、今後のRoute Handlerや動的metadataの実装にも拡張しやすい構成にしています。
-
-### 外部APIのデータをUIへ直接持ち込まない
-
-Google Books APIのレスポンスには、アプリでは使用しない情報や、欠損する可能性のある項目が含まれています。
-そのため、APIのレスポンスをそのままコンポーネントへ渡すのではなく、一覧表示用の`Book`型と詳細表示用の`BookDetail`型へ変換しました。
-これにより、UI側がGoogle Books API固有のデータ構造へ強く依存せず、必要な値を扱いやすくしています。
-
-### UIの状態を役割ごとに分離
-
-検索画面では、以下の状態を個別に管理しています。
-
-- 検索前
-- 初回検索中
-- 検索結果あり
-- 検索結果なし
-- 初回検索エラー
-- 追加読み込み中
-- 追加読み込みエラー
-
-特に、初回検索と追加読み込みの状態を分けることで、追加取得中も既存の検索結果を残したまま、追加読み込み部分だけを更新できるようにしました。
-
-### 関数型更新による安全なデータ追加
-
-「さらに見る」で取得した書籍は、現在のstateを受け取る関数型更新を使って末尾へ追加しています。
-追加時には既存の書籍IDを`Set`で管理し、同じIDの書籍が重複して表示されないようにしています。
-
-### 外部APIのデータ品質に合わせた仕様変更
-
-当初はSF小説に限定した検索を検討していました。
-しかし、Google Books APIのカテゴリ情報には欠損や表記揺れがあり、想定した書籍が検索対象から外れるケースがありました。
-そのため、精度を担保できないジャンル絞り込みは採用せず、タイトル検索を中心とした仕様へ変更しました。
-実装したい機能を優先するのではなく、利用するAPIの実データを確認したうえで要件を見直す重要性を学びました。
-
-### MVPと追加改善を分けて進める
-
-最初からすべての機能を実装するのではなく、検索、一覧、追加読み込み、詳細表示をMVPとして先に完成させました。
-検索状態の保持、Route Handler化、動的metadata、テスト、CIなどはMVP後の改善項目として切り分けています。
-機能を増やし続けるのではなく、完成と公開を優先して実装範囲を管理することも、この制作で意識した点です。
-
-## 今後の改善点
-
-- 詳細ページから戻った際の検索語、検索結果の保持
-- Next.js Route Handlerを経由したAPIアクセス
-- APIキーのサーバー側環境変数への移行
+- Route Handler経由でGoogle Books APIへアクセスし、APIキーをサーバー側へ移動
 - 詳細ページの動的metadata
-- ZodによるAPIレスポンスの検証
-- Vitestによる単体テスト
-- React Testing Libraryによるコンポーネントテスト
-- GitHub Actionsによるlint、test、buildの自動実行
-- 検索結果の追加取得終了判定の改善
-- キャッシュやレート制限の検討
+- Vitest / React Testing Libraryによるテスト
+- GitHub Actionsによるlint・test・buildの自動実行
+- APIレスポンスの取得件数を基準にした追加取得終了判定の改善
+- キャッシュ・レート制限の検討
