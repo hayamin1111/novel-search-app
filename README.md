@@ -198,7 +198,7 @@ npm install
 プロジェクトルートに`.env.local`を作成します。
 
 ```bash
-NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY=your_api_key
+GOOGLE_BOOKS_API_KEY=your_api_key
 ```
 
 Google Cloud ConsoleでBooks APIを有効にし、APIキーにAPI・HTTPリファラー制限を設定してください。

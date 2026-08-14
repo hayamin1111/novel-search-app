@@ -12,7 +12,7 @@ import BookOpenIcon from "@/components/icons/BookOpenIcon";
 import LoadingIcon from "@/components/icons/LoadingIcon";
 import ErrorIcon from "@/components/icons/ErrorIcon";
 import { getSearchSnapshot, saveSearchSnapshot, clearSearchSnapshot } from "@/lib/searchSnapshot";
-import { searchBooks } from "@/lib/googleBooksApi";
+import { searchBooks } from "@/lib/booksApiClient";
 
 export default function BookSearch() {
   // 状態管理

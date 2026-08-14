@@ -3,7 +3,7 @@ import styles from "./index.module.css";
 import linkStyles from "@/styles/link.module.css";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getBookDetail } from "@/lib/googleBooksApi";
+import { getBookDetail } from "@/lib/booksApiClient";
 import type { BookDetail } from "@/types/book";
 import BookDetailContent from "@/components/BookDetail/BookDetailContent";
 import LoadingIcon from "@/components/icons/LoadingIcon";
