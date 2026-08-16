@@ -1,4 +1,5 @@
 import { expect, describe, test } from "vitest";
+import type { GoogleBooksItem, GoogleBooksSearchResponse } from "@/types/book";
 import { GoogleBooksItemSchema, GoogleBooksSearchResponseSchema, BookSchema } from "./books";
 
 // Arrange: テスト用データ
@@ -16,13 +17,16 @@ const validGoogleBooksItem = {
     pageCount: 320,
     previewLink: "https://books.google.com/test-preview",
   },
-};
+} satisfies GoogleBooksItem;
+
 const validSearchResponse = {
   items: [validGoogleBooksItem],
-};
+} satisfies GoogleBooksSearchResponse;
+
 const invalidSearchResponse = {
   items: "配列じゃない",
 };
+
 const validBook = {
   id: "book-1",
   title: "テスト本",

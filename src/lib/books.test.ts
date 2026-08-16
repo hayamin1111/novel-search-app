@@ -3,7 +3,7 @@ import type { Book } from "@/types/book";
 import { mergeUniqueBooks } from "./books";
 
 // Arrange: テスト用データ
-const existingBooks: Book[] = [
+const existingBooks = [
   {
     id: "book-1",
     title: "既存の書籍1",
@@ -16,8 +16,8 @@ const existingBooks: Book[] = [
     authors: ["著者B"],
     publishedDate: "2024-02-01",
   },
-];
-const incomingBooks: Book[] = [
+] satisfies Book[];
+const incomingBooks = [
   {
     id: "book-2",
     title: "既存IDと重複する書籍",
@@ -42,7 +42,7 @@ const incomingBooks: Book[] = [
     authors: ["著者D"],
     publishedDate: "2024-04-01",
   },
-];
+] satisfies Book[];
 
 describe("mergeUniqueBooks", () => {
   test("重複しない書籍を末尾に追加できる（既存+追加）", () => {

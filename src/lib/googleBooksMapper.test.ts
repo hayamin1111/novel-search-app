@@ -3,7 +3,7 @@ import type { GoogleBooksItem } from "@/types/book";
 import { mapGoogleBooksItemToBook, mapGoogleBooksItemToBookDetail } from "./googleBooksMapper";
 
 // Arrange: テスト用データ
-const googleBooksItemFixture: GoogleBooksItem = {
+const googleBooksItemFixture = {
   id: "test-book-1",
   volumeInfo: {
     title: "テスト用書籍タイトル",
@@ -17,11 +17,12 @@ const googleBooksItemFixture: GoogleBooksItem = {
     pageCount: 320,
     previewLink: "https://books.google.com/test-preview",
   },
-};
-const googleBooksItemWithMissingFields: GoogleBooksItem = {
+} satisfies GoogleBooksItem;
+
+const googleBooksItemWithMissingFields = {
   id: "test-book-2",
   volumeInfo: {},
-};
+} satisfies GoogleBooksItem;
 
 describe("mapGoogleBooksItemToBook", () => {
   test("正常系：入力値がBook型相当の形に変換できる", () => {
