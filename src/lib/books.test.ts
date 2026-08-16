@@ -1,4 +1,4 @@
-import { expect, describe, it } from "vitest";
+import { expect, describe, test } from "vitest";
 import type { Book } from "@/types/book";
 import { mergeUniqueBooks } from "./books";
 
@@ -45,7 +45,7 @@ const incomingBooks: Book[] = [
 ];
 
 describe("mergeUniqueBooks", () => {
-  it("重複しない書籍を末尾に追加できる（既存+追加）", () => {
+  test("重複しない書籍を末尾に追加できる（既存+追加）", () => {
     // Arrange: テスト用データ
     const nonDuplicateIncomingBooks = [incomingBooks[1], incomingBooks[3]];
 
@@ -56,7 +56,7 @@ describe("mergeUniqueBooks", () => {
     expect(result).toEqual([...existingBooks, ...nonDuplicateIncomingBooks]);
   });
 
-  it("既存の書籍IDと重複する書籍を除外できる（既存）", () => {
+  test("既存の書籍IDと重複する書籍を除外できる（既存）", () => {
     // Arrange: テスト用データ
     const baseExistingBooks = [existingBooks[0], existingBooks[1]];
     const duplicateIncomingBooks = [existingBooks[0]];
@@ -68,7 +68,7 @@ describe("mergeUniqueBooks", () => {
     expect(result).toEqual(baseExistingBooks);
   });
 
-  it("追加書籍内でIDが重複している場合も除外できる（追加）", () => {
+  test("追加書籍内でIDが重複している場合も除外できる（追加）", () => {
     // Arrange: テスト用データ
     const firstBooks = [existingBooks[0]];
     const secondBooks = [incomingBooks[1], incomingBooks[2], incomingBooks[3]];
@@ -80,7 +80,7 @@ describe("mergeUniqueBooks", () => {
     expect(result).toEqual([existingBooks[0], incomingBooks[1], incomingBooks[3]]);
   });
 
-  it("結果の並び順が維持されている（既存→追加）", () => {
+  test("結果の並び順が維持されている（既存→追加）", () => {
     // Arrange: テスト用データ
     const firstBooks = [existingBooks[0]];
     const secondBooks = [incomingBooks[3]];
@@ -92,7 +92,7 @@ describe("mergeUniqueBooks", () => {
     expect(result).toEqual([existingBooks[0], incomingBooks[3]]);
   });
 
-  it("元の2つの配列を変更しない（既存・追加）", () => {
+  test("元の2つの配列を変更しない（既存・追加）", () => {
     // Arrange: テスト用データ
     const firstBooks = [existingBooks[0], existingBooks[1]];
     const secondBooks = [incomingBooks[2], incomingBooks[3]];

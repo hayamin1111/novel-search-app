@@ -1,4 +1,4 @@
-import { expect, describe, it } from "vitest";
+import { expect, describe, test } from "vitest";
 import type { GoogleBooksItem } from "@/types/book";
 import { mapGoogleBooksItemToBook, mapGoogleBooksItemToBookDetail } from "./googleBooksMapper";
 
@@ -24,7 +24,7 @@ const googleBooksItemWithMissingFields: GoogleBooksItem = {
 };
 
 describe("mapGoogleBooksItemToBook", () => {
-  it("正常系：入力値がBook型相当の形に変換できる", () => {
+  test("正常系：入力値がBook型相当の形に変換できる", () => {
     // Act: テスト対象を実行
     const result = mapGoogleBooksItemToBook(googleBooksItemFixture);
 
@@ -38,7 +38,7 @@ describe("mapGoogleBooksItemToBook", () => {
     });
   });
 
-  it("未設定項目に代替値を入れられる", () => {
+  test("未設定項目に代替値を入れられる", () => {
     // Act: テスト対象を実行
     const result = mapGoogleBooksItemToBook(googleBooksItemWithMissingFields);
 
@@ -52,7 +52,7 @@ describe("mapGoogleBooksItemToBook", () => {
     });
   });
 
-  it("戻り値の変換が問題なくできる（thumbnail を https に正規化できる）", () => {
+  test("戻り値の変換が問題なくできる（thumbnail を https に正規化できる）", () => {
     // Act: テスト対象を実行
     const result = mapGoogleBooksItemToBook(googleBooksItemFixture);
 
@@ -62,7 +62,7 @@ describe("mapGoogleBooksItemToBook", () => {
 });
 
 describe("mapGoogleBooksItemToBookDetail", () => {
-  it("descriptionを成型（HTMLを除去、<br> を改行へ変換）できる", () => {
+  test("descriptionを成型（HTMLを除去、<br> を改行へ変換）できる", () => {
     // Act: テスト対象を実行
     const result = mapGoogleBooksItemToBookDetail(googleBooksItemFixture);
 
@@ -80,7 +80,7 @@ describe("mapGoogleBooksItemToBookDetail", () => {
     });
   });
 
-  it("descriptionを成型（HTMLを除去、<br> を改行へ変換）できる", () => {
+  test("descriptionを成型（HTMLを除去、<br> を改行へ変換）できる", () => {
     // Act: テスト対象を実行
     const result = mapGoogleBooksItemToBookDetail(googleBooksItemFixture);
 
@@ -88,7 +88,7 @@ describe("mapGoogleBooksItemToBookDetail", () => {
     expect(result.description).toBe("概要です。\n2行目です。3行目です。");
   });
 
-  it("publisherなど詳細用の代替値を入れられる", () => {
+  test("publisherなど詳細用の代替値を入れられる", () => {
     // Act: テスト対象を実行
     const result = mapGoogleBooksItemToBookDetail(googleBooksItemWithMissingFields);
 
