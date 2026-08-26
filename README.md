@@ -206,7 +206,7 @@ npm install
 GOOGLE_BOOKS_API_KEY=your_api_key
 ```
 
-Google Cloud ConsoleでBooks APIを有効にし、APIキーの「APIの制限」をBooks APIだけに設定してください。キーはサーバー側の環境変数で管理し、`.env.local`をGitへ追加しないよう注意ください。
+Google Cloud ConsoleでBooks APIを有効にし、APIキーの「APIの制限」をBooks APIだけに設定してください。`.env.local`をGitへ追加しないようご注意ください。
 
 ### 4. 開発サーバーを起動
 
