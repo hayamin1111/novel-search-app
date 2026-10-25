@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
-import { beforeEach, expect, describe, test } from "vitest";
+import { beforeEach, expect, describe, test, vi } from "vitest";
 import type { SearchSnapshot } from "@/types/searchSnapshot";
 import { getSearchSnapshot, saveSearchSnapshot } from "./searchSnapshot";
+import { afterEach } from "node:test";
 
 // Arrange: テスト用データ
 const CURRENT_TIME = 1_800_000_000_000;
@@ -29,6 +30,11 @@ const searchSnapshotFixture = {
   savedAt: CURRENT_TIME - 5 * 60 * 1000,
 } satisfies SearchSnapshot;
 
+beforeEach(() => {
+  sessionStorage.clear();
+  vi.spyOn(Date, "now").mockReturnValue(CURRENT_TIME); //現在時刻の固定
+});
+
 describe("saveSearchSnapshot", () => {
   beforeEach(() => {
     sessionStorage.clear();
@@ -45,8 +51,13 @@ describe("saveSearchSnapshot", () => {
 });
 
 describe("getSearchSnapshot", () => {
-  beforeEach(() => {
-    sessionStorage.clear();
+  test("queryが一致し、有効期限内ならsnapshotを返す", () => {
+    // Arrange:
+    saveSearchSnapshot(searchSnapshotFixture);
+    // Act: テスト対象を実行
+    const result = getSearchSnapshot(searchSnapshotFixture.query); //query一致
+    // Assert: 結果を確認
+    expect(result).toEqual(searchSnapshotFixture);
   });
 
   test("保存データがない場合はundefinedを返す", () => {
@@ -63,21 +74,25 @@ describe("getSearchSnapshot", () => {
     expect(result).toBeUndefined();
   });
 
-  // test("queryが不一致ならundefinedを返してstorageから削除する", () => {
-  //   // Act: テスト対象を実行
-  //   // Assert: 結果を確認
-  // });
+  test("queryが不一致ならundefinedを返してstorageから削除する", () => {
+    // Act: テスト対象を実行
+    // Assert: 結果を確認
+  });
 
-  // test("queryが不一致ならundefinedを返してstorageから削除する", () => {
-  //   // Act: テスト対象を実行
-  //   // Assert: 結果を確認
-  // });
+  test("queryが不一致ならundefinedを返してstorageから削除する", () => {
+    // Act: テスト対象を実行
+    // Assert: 結果を確認
+  });
 
   // queryが不一致ならundefinedを返してstorageから削除する
   // 10分以上経過していたらundefinedを返して削除する
   // JSONが壊れていたらundefinedを返して削除する
   // Zod検証に失敗したらundefinedを返して削除する
   // clearSearchSnapshotで削除できる
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
 });
 
 // describe("clearSearchSnapshot", () => {

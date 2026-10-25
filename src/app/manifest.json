@@ -1,7 +1,7 @@
 {
   "name": "Book Finder | 書籍検索サービス",
   "short_name": "Book Finder",
-  "description": "気になる本をタイトルから探せる書籍検索サービスです。",
+  "description": "気になる本をキーワードで探せる書籍検索サービスです。",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff",

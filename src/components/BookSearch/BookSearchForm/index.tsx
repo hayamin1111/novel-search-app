@@ -33,9 +33,9 @@ export default function BookSearchForm({ defaultSearchWord, onSearch }: Props) {
         id="search"
         type="search"
         name="search"
-        placeholder="タイトルを入力"
+        placeholder="キーワードを入力"
         defaultValue={defaultSearchWord}
-        aria-label="書籍タイトルを検索"
+        aria-label="キーワードで検索"
         className={styles.searchInput}
       />
       <button type="submit" aria-label="検索" className={styles.submitButton}>

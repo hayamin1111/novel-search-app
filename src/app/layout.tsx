@@ -12,7 +12,7 @@ const righteous = Righteous({
 
 export const metadata: Metadata = {
   title: "Book Finder | 書籍検索サービス",
-  description: "気になる本をタイトルから探せる書籍検索サービスです。",
+  description: "気になる本をキーワードで探せる書籍検索サービスです。",
 };
 
 export default function RootLayout({
