@@ -26,7 +26,8 @@ export async function GET(request: Request) {
 
   // URL作成
   const queryParams = new URLSearchParams({
-    q: `intitle:${q}`,
+    // q: `intitle:${q}`, //不具合発生する模様 https://discuss.google.dev/t/google-books-api-intitle-inauthor-queries-return-zero-results-while-plain-queries-succeed-october-2026/401929
+    q,
     printType: "books",
     startIndex: startIndexParam.toString(),
     maxResults: "10",

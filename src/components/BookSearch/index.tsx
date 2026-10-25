@@ -202,7 +202,9 @@ export default function BookSearch() {
             {isInitial && (
               <div className={styles.resultStatus}>
                 <SearchIcon className={styles.resultStatusIcon} />
-                <p className={styles.resultStatusText}>タイトルを入力して本を探してみましょう。</p>
+                <p className={styles.resultStatusText}>
+                  キーワードを入力して本を探してみましょう。
+                </p>
               </div>
             )}
             {isLoading && (

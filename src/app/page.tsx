@@ -14,7 +14,7 @@ export default function Home() {
         </p>
       </header>
       <main>
-        <p className={styles.lead}>気になる本をタイトルから検索できます。</p>
+        <p className={styles.lead}>気になる本をキーワードで検索できます。</p>
         {/* Suspense:useSearchParamsがブラウザ側でURLを読める状態になるまで、BookSearchのレンダーを保留する */}
         <Suspense fallback={null}>
           <BookSearch />
